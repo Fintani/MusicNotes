@@ -32,13 +32,14 @@ def show_category(request, category_name_slug):
     return render(request, "music_notes/category.html", context=context_dict)
 
 def index(request):
-    category_list = Category.objects.order_by("-likes")[:5]
-    page_list = Page.objects.order_by("-views")[:5]
 
-    context_dict = {}
-    context_dict["boldmessage"] = "Crunchy, creamy, cookie, candy, cupcake!"
-    context_dict["categories"] = category_list
-    context_dict["pages"] = page_list
+    context_dict = {
+        "popular_songs": POPULAR_SONGS,
+        "highest_rated_songs": HIGHEST_RATED_SONGS,
+        "song_suggestions": SONG_SUGGESTIONS,
+        "album_suggestions": ALBUM_SUGGESTIONS,
+        "recommended_songs": RECOMMENDED_SONGS,
+    }
 
     visitor_cookie_handler(request)
 
@@ -188,3 +189,45 @@ def visitor_cookie_handler(request):
 
     request.session["visits"] = visits
 
+def search(request):
+    return render(request, "music_notes/search_results.html")   # This is jsut placeholder. Template not made yet.
+
+
+#  THIS IS JUST FOR TEST. REPLACE IT WITH DATABASE QUERIES
+POPULAR_SONGS = [
+    {"title": "Song 1", "artist": "Artist A"},
+    {"title": "Song 2", "artist": "Artist B"},
+    {"title": "Song 3", "artist": "Artist C"},
+    {"title": "Song 4", "artist": "Artist D"},
+    {"title": "Song 5", "artist": "Artist E"},
+]
+
+HIGHEST_RATED_SONGS = [
+    {"title": "Song 1", "artist": "Artist X"},
+    {"title": "Song 2", "artist": "Artist Y"},
+    {"title": "Song 3", "artist": "Artist Z"},
+    {"title": "Song 4", "artist": "Artist W"},
+    {"title": "Song 5", "artist": "Artist V"},
+    {"title": "Song 6", "artist": "Artist U"},
+    {"title": "Song 7", "artist": "Artist T"},
+    {"title": "Song 8", "artist": "Artist S"},
+    {"title": "Song 9", "artist": "Artist R"},
+    {"title": "Song 10", "artist": "Artist Q"},
+]
+
+SONG_SUGGESTIONS = [
+    {"id": 1, "title": "Search Song 1"},
+    {"id": 2, "title": "Search Song 2"},
+]
+
+ALBUM_SUGGESTIONS = [
+    {"id": 1, "title": "Search Album 1"},
+    {"id": 2, "title": "Search Album 2"},
+]
+
+RECOMMENDED_SONGS = [
+    {"title": "Recommended 1", "artist": "Artist M"},
+    {"title": "Recommended 2", "artist": "Artist N"},
+    {"title": "Recommended 3", "artist": "Artist O"},
+    {"title": "Recommended 4", "artist": "Artist P"},
+]
