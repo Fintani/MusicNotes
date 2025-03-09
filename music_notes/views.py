@@ -53,6 +53,11 @@ def about(request):
 
     return render(request, "music_notes/about.html", context=context_dict)
 
+def browse(request):
+    return render(request, 'music_notes/browse.html')
+
+
+
 @login_required
 def add_category(request):
     form = CategoryForm()
@@ -183,4 +188,3 @@ def visitor_cookie_handler(request):
 
     request.session["visits"] = visits
 
-    

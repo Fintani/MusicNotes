@@ -6,12 +6,12 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1>Register for music_notes</h1>
+    <h1>Register for Music Notes</h1>
     {% if registered %}
-    music_notes says: <strong>thank you for registering!</strong>
+    <strong>thank you for registering!</strong>
     <a href="{% url 'music_notes:index' %}">Return to the homepage.</a><br/>
     {% else %}
-    music_notes says: <strong>register here!</strong><br/>
+    <strong>register here!</strong><br/>
     <form id="user_form" method="post" action="{% url 'music_notes:register' %}"
           enctype="multipart/form-data">
           {% csrf_token %}
