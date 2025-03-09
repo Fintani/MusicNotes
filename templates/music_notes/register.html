@@ -1,23 +1,58 @@
 {% extends "music_notes/base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block title_block %}
     Register
 {% endblock %}
 
 {% block body_block %}
-    <h1>Register for Music Notes</h1>
-    {% if registered %}
-    <strong>thank you for registering!</strong>
-    <a href="{% url 'music_notes:index' %}">Return to the homepage.</a><br/>
-    {% else %}
-    <strong>register here!</strong><br/>
-    <form id="user_form" method="post" action="{% url 'music_notes:register' %}"
-          enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ user_form.as_p }}
-          {{ profile_form.as_p }}
-          <input type="submit" name="submit" value="Register" />
-    </form>
-    {% endif %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 85vh;">
+    <div class="card shadow-lg p-5 rounded" style="width: 500px;">
+
+        <!-- Message if Registration Succeeds -->
+        {% if registered %}
+            <h2 class="text-center text-success">Thank you for registering!</h2>
+            <p class="text-center"><a href="{% url 'music_notes:index' %}" class="btn btn-primary">Return to Homepage</a></p>
+        {% else %}
+        
+        <!-- Register Title -->
+        <h2 class="text-center mb-4">Create Your Account</h2>
+
+        <!-- Registration Form -->
+        <form id="user_form" method="post" action="{% url 'music_notes:register' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="id_username" class="form-label">Username</label>
+                <input type="text" class="form-control form-control-lg" name="username" id="id_username" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="id_email" class="form-label">Email</label>
+                <input type="email" class="form-control form-control-lg" name="email" id="id_email" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="id_password" class="form-label">Password</label>
+                <input type="password" class="form-control form-control-lg" name="password" id="id_password" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="id_password2" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control form-control-lg" name="password2" id="id_password2" required>
+            </div>
+
+            {{ profile_form.as_p }}
+
+            <button type="submit" class="btn btn-dark w-100 py-2">Register</button>
+        </form>
+
+        <!-- Login Link -->
+        <p class="mt-4 text-center">
+            Already have an account? <a href="{% url 'music_notes:login' %}" class="text-primary fw-bold">Log in</a>
+        </p>
+
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
