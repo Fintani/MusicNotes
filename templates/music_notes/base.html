@@ -24,13 +24,13 @@
 
                 <!-- Links to the left -->
                 <div class="navbar-nav">
-                    <a class="nav-link text-white" href="{% url 'music_notes:about' %}">About</a>
-                    <a class="nav-link text-white" href="{% url 'music_notes:browse' %}">Browse</a>
+                    <a class="nav-link text-white fs-2 me-4" href="{% url 'music_notes:about' %}">About</a>
+                    <a class="nav-link text-white fs-2" href="{% url 'music_notes:browse' %}">Browse</a>
                 </div>
 
                 <!-- Title in center -->
                 <div class="flex-grow-1 text-center">
-                    <a class="navbar-text h2 text-white fw-bold text-decoration-none" href="{% url 'music_notes:index' %}">   <!-- Clicking on title brings you to index page-->
+                    <a class="navbar-text display-5 text-white fw-bold text-decoration-none" href="{% url 'music_notes:index' %}">   <!-- Clicking on title brings you to index page-->
                         MUSIC NOTES
                     </a>
                 </div>
@@ -38,10 +38,10 @@
                 <!-- Links to the right -->
                 <div class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                        <a class="btn btn-outline-light me-2" href="{% url 'music_notes:logout' %}">Logout</a>
+                        <a class="nav-link text-white me-3 fs-2" href="{% url 'music_notes:logout' %}">Logout</a>
                     {% else %}
-                        <a class="btn btn-outline-light me-2" href="{% url 'music_notes:login' %}">Log In</a>
-                        <a class="btn btn-primary" href="{% url 'music_notes:register' %}">Sign Up</a>
+                        <a class="nav-link text-white me-3 fs-2" href="{% url 'music_notes:login' %}">Log In</a>
+                        <a class="btn btn-outline-light me-3 fs-2" href="{% url 'music_notes:register' %}">Sign Up</a>
                     {% endif %}
                 </div>
 
