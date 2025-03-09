@@ -46,3 +46,23 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ("picture",)
+
+
+class EditAccountForm(forms.ModelForm):
+    profile_picture = forms.ImageField(required=False)
+
+    class Meta:
+        model = User
+        fields = ["username", "email"]
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+
+        if self.cleaned_data.get("profile_picture"):
+            user.userprofile.picture = self.cleaned_data["profile_picture"]
+            user.userprofile.save()
+
+        if commit:
+            user.save()
+            return user
+        return user

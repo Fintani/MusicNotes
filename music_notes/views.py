@@ -6,6 +6,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from datetime import datetime
+from django.core.paginator import Paginator
+from .forms import EditAccountForm
+from django.contrib import messages
+from .models import UserProfile
+
 
 from music_notes.models import Category
 from music_notes.models import Page
@@ -167,6 +172,40 @@ def user_logout(request):
     logout(request)
     return redirect(reverse("music_notes:index"))
 
+@login_required
+def account(request):
+    page = request.GET.get('page', 1)
+    paginator = Paginator(RATINGS_DB, 5)
+    ratings = paginator.get_page(page)
+    
+    context = {
+        "user": request.user,
+        "total_ratings": len(RATINGS_DB),
+        "ratings": ratings,
+    }
+    return render(request, "music_notes/account.html", context)
+
+
+@login_required
+def edit_account(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        form = EditAccountForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+
+            if "profile_picture" in request.FILES:
+                user_profile.picture = request.FILES["profile_picture"]
+                user_profile.save()
+
+            messages.success(request, "Your account has been updated successfully!")
+            return redirect("music_notes:account")
+    else:
+        form = EditAccountForm(instance=request.user)
+
+    return render(request, "music_notes/edit_account.html", {"form": form})
+
 def get_server_side_cookie(request, cookie, default_val=None):
     val = request.session.get(cookie)
     if not val:
@@ -190,10 +229,14 @@ def visitor_cookie_handler(request):
     request.session["visits"] = visits
 
 def search(request):
-    return render(request, "music_notes/search_results.html")   # This is jsut placeholder. Template not made yet.
+    return render(request, "music_notes/search_results.html")   # This is justt placeholder.
 
 
-#  THIS IS JUST FOR TEST. REPLACE IT WITH DATABASE QUERIES
+
+
+# THE ENTRIES BELOW ARE JUST FOR TESTING PURPOSES. REPLACE IT WITH REAL DATABASE QUERIES
+
+# INDEX PAGE
 POPULAR_SONGS = [
     {"title": "Song 1", "artist": "Artist A"},
     {"title": "Song 2", "artist": "Artist B"},
@@ -230,4 +273,15 @@ RECOMMENDED_SONGS = [
     {"title": "Recommended 2", "artist": "Artist N"},
     {"title": "Recommended 3", "artist": "Artist O"},
     {"title": "Recommended 4", "artist": "Artist P"},
+]
+
+# ACCOUNT PAGE
+RATINGS_DB = [
+    {"value": 3, "song_or_album": "Shape of You", "artist": "Ed Sheeran", "date": "2025-03-01"},
+    {"value": 4, "song_or_album": "Blinding Lights", "artist": "The Weeknd", "date": "2025-02-28"},
+    {"value": 3, "song_or_album": "Bohemian Rhapsody", "artist": "Queen", "date": "2025-02-25"},
+    {"value": 5, "song_or_album": "Thriller", "artist": "Michael Jackson", "date": "2025-02-20"},
+    {"value": 5, "song_or_album": "Numb", "artist": "Linkin Park", "date": "2025-02-15"},
+    {"value": 4, "song_or_album": "Someone Like You", "artist": "Adele", "date": "2025-02-10"},
+    {"value": 2, "song_or_album": "Old Town Road", "artist": "Lil Nas X", "date": "2025-02-05"},
 ]
