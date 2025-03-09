@@ -1,4 +1,4 @@
-{% extends "rango/base.html" %}
+{% extends "music_notes/base.html" %}
 {% load staticfiles %}
 
 {% block title_block %}
@@ -19,7 +19,7 @@
     {% if categories %}
     <ul>
         {% for category in categories %}
-        <li><a href="{% url 'rango:show_category' category.slug %}">{{ category.name }}</a></li>
+        <li><a href="{% url 'music_notes:show_category' category.slug %}">{{ category.name }}</a></li>
         {% endfor %}
     </ul>
     {% else %}

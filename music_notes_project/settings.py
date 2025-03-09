@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rango',
+    'music_notes',
 ]
 
 MIDDLEWARE = [
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'tango_with_django_project.urls'
+ROOT_URLCONF = 'music_notes_project.urls'
 
 TEMPLATES = [
     {
@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tango_with_django_project.wsgi.application'
+WSGI_APPLICATION = 'music_notes_project.wsgi.application'
 
 
 # Database
@@ -137,4 +137,4 @@ STATICFILES_DIRS = [STATIC_DIR, ]
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = "/media/"
 
-LOGIN_URL = "rango:login"
+LOGIN_URL = "music_notes:login"

@@ -1,4 +1,4 @@
-{% extends "rango/base.html" %}
+{% extends "music_notes/base.html" %}
 {% load staticfiles %}
 
 {% block title_block %}
@@ -12,6 +12,6 @@
     This tutorial has been put together by Fintan.<br />
     Visits: {{ visits }}<br />
         
-    <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango" />
+    <img src="{% static 'images/music_notes.jpg' %}" alt="Picture of Rango" />
     <img src="{{ MEDIA_URL }}cat.jpg" alt="Picture of a Cat" />
 {% endblock %}

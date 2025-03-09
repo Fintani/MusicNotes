@@ -1,4 +1,4 @@
-{% extends "rango/base.html" %}
+{% extends "music_notes/base.html" %}
 {% load staticfiles %}
 
 {% block title_block %}
@@ -6,13 +6,13 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1>Register for Rango</h1>
+    <h1>Register for music_notes</h1>
     {% if registered %}
-    Rango says: <strong>thank you for registering!</strong>
-    <a href="{% url 'rango:index' %}">Return to the homepage.</a><br/>
+    music_notes says: <strong>thank you for registering!</strong>
+    <a href="{% url 'music_notes:index' %}">Return to the homepage.</a><br/>
     {% else %}
-    Rango says: <strong>register here!</strong><br/>
-    <form id="user_form" method="post" action="{% url 'rango:register' %}"
+    music_notes says: <strong>register here!</strong><br/>
+    <form id="user_form" method="post" action="{% url 'music_notes:register' %}"
           enctype="multipart/form-data">
           {% csrf_token %}
           {{ user_form.as_p }}

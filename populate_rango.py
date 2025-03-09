@@ -4,7 +4,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE",
 
 import django
 django.setup()
-from rango.models import Category, Page
+from music_notes.models import Category, Page
 
 def populate():
     python_pages = [
@@ -67,5 +67,5 @@ def add_cat(name,views=0, likes=0):
     return c
 
 if __name__ == "__main__":
-    print("Starting Rango population script...")
+    print("Starting music_notes population script...")
     populate()

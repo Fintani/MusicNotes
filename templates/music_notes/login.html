@@ -1,4 +1,4 @@
-{% extends "rango/base.html" %}
+{% extends "music_notes/base.html" %}
 {% load staticfiles %}
 
 {% block title_block %}
@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1>Login to Rango</h1>
-    <form id="login_form" method="post" action="{% url 'rango:login' %}">
+    <h1>Login to music_notes</h1>
+    <form id="login_form" method="post" action="{% url 'music_notes:login' %}">
         {% csrf_token %}
         Username: <input type="text" name="username" value="" size="50">
         <br/>
