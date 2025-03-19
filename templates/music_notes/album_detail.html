@@ -1,0 +1,10 @@
+{% extends "music_notes/base.html" %}
+
+{% block title_block %}
+    Album Details
+{% endblock %}
+
+{% block body_block %}
+    <h2>{{ album.title }}</h2>
+    <p>By {{ album.artist.name }}</p>
+{% endblock %}
