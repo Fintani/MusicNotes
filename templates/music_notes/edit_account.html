@@ -14,8 +14,16 @@
     
         <!-- Show current profile picture -->
         <div class="mb-3 text-center">
+            {% if user.userprofile.picture %}
             <img src="{{ user.userprofile.picture.url }}" alt="Profile Picture"
-                 class="rounded-circle shadow-sm mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                 class="rounded-circle shadow-sm mb-3"
+                 style="width: 150px; height: 150px; object-fit: cover;">
+            {% else %}
+                <img src="{% static 'images/default_profile.jpg' %}" alt="Default Profile Picture"
+                    class="rounded-circle shadow-sm mb-3"
+                    style="width: 150px; height: 150px; object-fit: cover;">
+            {% endif %}
+        
         </div>
     
         <!-- Show form fields -->
