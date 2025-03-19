@@ -1,0 +1,19 @@
+{% extends "music_notes/base.html" %}
+
+{% block title_block %}
+    Search Results
+{% endblock %}
+
+{% block body_block %}
+    {% if song_query %}
+        <h2>{{ song_query }}: </h2> <br/>
+        <h3>Albums:</h3>
+        {% for album in albums %}
+            {{ album }}<br/>
+        {% endfor %}
+        <h3>Songs</h3>
+        {% for song in songs %}
+            {{ song }}<br/>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

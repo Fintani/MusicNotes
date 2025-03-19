@@ -38,6 +38,10 @@ def about(request):
 
     visitor_cookie_handler(request)
     context_dict["visits"] = request.session["visits"]
+    #replace these with real values
+    context_dict["song_count"] = 100
+    context_dict["album_count"] = 100
+    context_dict["artist_count"] = 100
 
     return render(request, "music_notes/about.html", context=context_dict)
 
@@ -164,7 +168,19 @@ def visitor_cookie_handler(request):
     request.session["visits"] = visits
 
 def search(request):
-    return render(request, "music_notes/search_results.html")   # This is justt placeholder.
+    context_dict = {}
+    if request.method == "POST":
+        song_query = request.POST["song_query"]
+        context_dict["song_query"] = song_query
+
+        albums = Category.objects.filter(name__contains=song_query)
+        context_dict["albums"] = albums
+
+        songs = Page.objects.filter(title__contains=song_query)
+        context_dict["songs"] = songs
+        return render(request, "music_notes/search.html",context_dict)
+    else:
+        return render(request, "music_notes/search.html")
 
 
 

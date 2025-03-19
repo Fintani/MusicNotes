@@ -6,10 +6,17 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1>About</h1>
-        
-    Work in progress<br />
-
+<div class="container mt-4">
+    <div class="col-md-4 text-center d-flex flex-column align-items-center">
+        <h1>About Us</h1>
+        <img src="{% static 'images/about_man_listening.jpg' %}" alt="Man Listening To Music">
+        Music Notes is a place to share, discover and rate music. With plenty of albums and artists you are sure to find something to enjoy.<br />
+    </div>
+    <div>
+        Songs: {{ song_count }}
+        Albums: {{ album_count }}
+        Artists: {{ artist_count }}
+    </div>
     Visits: {{ visits }}<br />
-        
+</div>
 {% endblock %}
