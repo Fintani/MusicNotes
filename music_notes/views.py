@@ -175,9 +175,14 @@ def artist_detail(request, artist_name):
     artist_name = artist_name.replace('-', ' ')
     artist = get_object_or_404(Artist, name=artist_name)
     name = artist.name
+    albums = artist.albums.all()
+    songs = artist.songs.all()
 
     return render(request, 'music_notes/artist_detail.html', {
-        'name': name
+        'artist': artist,
+        'name': name,
+        'albums': albums,
+        'songs': songs
     })
 
 def album_detail(request, artist_name, album_title):

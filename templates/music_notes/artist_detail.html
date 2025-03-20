@@ -1,9 +1,21 @@
 {% extends "music_notes/base.html" %}
 
 {% block title_block %}
-    Artist: {{ artist.name }}
+    Artist Detail
 {% endblock %}
 
 {% block body_block %}
-    <p>WORK IN PROGRESS</p>
+    <h2>Details for Artist - {{ artist.name }}</h2>
+    <div>
+        <h4>Songs:</h4>
+        {% for song in songs %}
+        <p>{{ song.title }}</p>
+        {% endfor %}
+    </div>
+    <div>
+        <h4>Albums:</h4>
+        {% for album in albums %}
+        <p>{{ album.title }}</p>
+        {% endfor %}
+    </div>
 {% endblock %}
