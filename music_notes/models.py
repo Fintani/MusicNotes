@@ -59,12 +59,18 @@ class Album(models.Model):
         return self.title
 
 class Song(models.Model):
+    def default_artist():
+        return Artist.objects.get_or_create(name="Unknown Artist")[0].id
+    
     title = models.CharField(max_length=255)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, default=default_artist)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="songs")
     duration = models.DurationField()
 
     def __str__(self):
         return self.title
+    
+    
 
 def validate_review_length(value):
     words = value.split()

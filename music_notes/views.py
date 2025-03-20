@@ -202,11 +202,14 @@ def song_detail(request, artist_name, album_title, song_title):
     song_title = song_title.replace('-', ' ')
     artist = get_object_or_404(Artist, name=artist_name)
     album = get_object_or_404(Album, artist=artist, title=album_title)
-    song = get_object_or_404(Song, album = album, title=song_title)
+    song = get_object_or_404(Song, artist = artist, album = album, title=song_title)
     album = song.album
+    artist = song.artist
     duration = song.duration
+    
 
     return render(request, 'music_notes/song_detail.html', {
+        'artist': artist,
         'song': song,
         'album': album,
         'duration': duration
