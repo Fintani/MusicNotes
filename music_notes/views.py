@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
 from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,7 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from .forms import EditAccountForm
 from django.contrib import messages
-from .models import UserProfile
+from .models import UserProfile, Artist, Album, Song, AlbumReview, SongReview
 
 
 from music_notes.models import Category
@@ -183,7 +184,54 @@ def search(request):
     else:
         return render(request, "music_notes/search.html")
 
+def artist_detail(request, artist_name):
+    artist_name = artist_name.replace('-', ' ')
+    artist = get_object_or_404(Artist, name=artist_name)
+    name = artist.name
+    albums = artist.albums.all()
+    songs = artist.songs.all()
 
+    return render(request, 'music_notes/artist_detail.html', {
+        'artist': artist,
+        'name': name,
+        'albums': albums,
+        'songs': songs
+    })
+
+def album_detail(request, artist_name, album_title):
+    artist_name = artist_name.replace('-', ' ')
+    album_title = album_title.replace('-', ' ')
+    artist = get_object_or_404(Artist, name=artist_name)
+    album = get_object_or_404(Album, artist=artist, title=album_title)
+    songs = album.songs.all()
+    artist = album.artist
+    release_date = album.release_date
+
+    return render(request, 'music_notes/album_detail.html', {
+        'album': album,
+        'songs': songs,
+        'artist': artist,
+        'release_date': release_date
+    })
+
+def song_detail(request, artist_name, album_title, song_title):
+    artist_name = artist_name.replace('-', ' ')
+    album_title = album_title.replace('-', ' ')
+    song_title = song_title.replace('-', ' ')
+    artist = get_object_or_404(Artist, name=artist_name)
+    album = get_object_or_404(Album, artist=artist, title=album_title)
+    song = get_object_or_404(Song, artist = artist, album = album, title=song_title)
+    album = song.album
+    artist = song.artist
+    duration = song.duration
+    
+
+    return render(request, 'music_notes/song_detail.html', {
+        'artist': artist,
+        'song': song,
+        'album': album,
+        'duration': duration
+    })
 
 
 # THE ENTRIES BELOW ARE JUST FOR TESTING PURPOSES. REPLACE IT WITH REAL DATABASE QUERIES
