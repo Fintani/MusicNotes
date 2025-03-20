@@ -40,10 +40,17 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username 
+    
+class Artist(models.Model):
+    name = models.CharField(max_length=255)
+    profile_picture = models.ImageField(upload_to="artists/", blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 class Album(models.Model):
     title = models.CharField(max_length=255)
-    artist = models.CharField(max_length=255)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name="albums")
     release_date = models.DateField()
     cover_image = models.ImageField(upload_to="albums/", blank=True, null=True)
 

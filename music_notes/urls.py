@@ -14,4 +14,6 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('account/', views.account, name='account'),
     path('account/edit/', views.edit_account, name='edit_account'),
+    path('album/<int:album_id>/', views.album_detail, name='album_detail'),#corrections needed
+    path('song/<int:song_id>/', views.song_detail, name='song_detail'),# corrections needed
     ]

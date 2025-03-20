@@ -5,6 +5,16 @@
 {% endblock %}
 
 {% block body_block %}
-    <h2>{{ album.title }}</h2>
-    <p>By {{ album.artist.name }}</p>
+
+<!-- album cover not implemented -->
+<h2>Details for Album - {{ album.title }}</h2>
+<p>Artist: {{ album.artist }}</p>
+<p>Release Date : {{album.release_date}}</p>
+<div>
+    {% for song in songs %}
+    <p>{{ song.title }}</p>
+    {% endfor %}
+</div>
+<!-- Overall Score not implemented -->
+<!-- reviews not implemented -->
 {% endblock %}

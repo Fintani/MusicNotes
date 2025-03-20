@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
 from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,7 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from .forms import EditAccountForm
 from django.contrib import messages
-from .models import UserProfile
+from .models import UserProfile, Album, Song, AlbumReview, SongReview
 
 
 from music_notes.models import Category
@@ -166,7 +167,29 @@ def visitor_cookie_handler(request):
 def search(request):
     return render(request, "music_notes/search_results.html")   # This is justt placeholder.
 
+def album_detail(request, album_id):
+    album = get_object_or_404(Album, id=album_id)
+    songs = album.songs.all()
+    artist = album.artist
+    release_date = album.release_date
 
+    return render(request, 'music_notes/album_detail.html', {
+        'album': album,
+        'songs': songs,
+        'artist': artist,
+        'release_date': release_date
+    })
+
+def song_detail(request, song_id):
+    song = get_object_or_404(Song, id=song_id)
+    album = song.album
+    duration = song.duration
+
+    return render(request, 'music_notes/song_detail.html', {
+        'song': song,
+        'album': album,
+        'duration': duration
+    })
 
 
 # THE ENTRIES BELOW ARE JUST FOR TESTING PURPOSES. REPLACE IT WITH REAL DATABASE QUERIES
