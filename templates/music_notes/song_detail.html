@@ -1,0 +1,16 @@
+{% extends "music_notes/base.html" %}
+
+{% block title_block %}
+    Song Details
+{% endblock %}
+
+{% block body_block %}
+<!-- album cover not implemented -->
+<h2>Details for Song - {{ song.title }}</h2>
+<p>Artist: {{song.artist}}</p>
+<p>Album: {{song.album}}</p>
+<p>Duration: {{song.duration}}</p>
+
+<!-- Overall Score not implemented -->
+<!-- Reviews not implemented -->
+{% endblock %}

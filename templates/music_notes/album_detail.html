@@ -1,0 +1,27 @@
+{% extends "music_notes/base.html" %}
+
+{% block title_block %}
+    Album Details
+{% endblock %}
+
+{% block body_block %}
+
+<!-- album cover not implemented -->
+<h2>Details for Album - {{ album.title }}</h2>
+<p>Artist: {{ album.artist }}</p>
+<p>Release Date : {{album.release_date}}</p>
+<div>
+    <h4>Songs:</h4>
+    {% if songs %}
+        <ul>
+            {% for song in songs %}
+                <li>{{ song.title }} - {{ song.duration }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No songs available.</p>
+    {% endif %}
+</div>
+<!-- Overall Score not implemented -->
+<!-- reviews not implemented -->
+{% endblock %}

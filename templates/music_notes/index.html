@@ -1,0 +1,66 @@
+{% extends "music_notes/base.html" %}
+{% load static %}
+
+{% block title_block %}Home{% endblock %}
+
+{% block body_block %}
+<div class="container mt-4">
+    <div class="row justify-content-center">   <!-- Centers everything -->
+        
+        <!-- Left Column: Most Popular Songs (Monthly) -->
+        <div class="col-md-3 me-md-5 text-center d-flex flex-column align-items-center">
+            <h3 class="fw-bold">Most Popular Songs (Monthly)</h3>
+            <div class="card text-center shadow-sm p-4">
+
+
+                <!-- Album Cover Placeholder -->
+                <img src="{% static 'images/placeholder_album.jpg' %}" alt="Album Cover" 
+                class="img-fluid rounded" style="max-width: 100%; height: auto;">
+
+
+                <ul class="list-group list-group-flush mt-4">
+                    {% for song in popular_songs %}
+                        <li class="list-group-item">{{ forloop.counter }}. {{ song.title }} - {{ song.artist }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Center Column: Search -->
+        <div class="col-md-4 text-center d-flex flex-column align-items-center">
+            <h3 class="fw-bold text-center w-100">Search</h3>
+            <form method="GET" action="{% url 'music_notes:search' %}" class="w-100">
+                <div class="mb-3 w-100"> 
+                    <input type="text" class="form-control text-center w-100" name="song_query" placeholder="Search for songs...">
+                </div>
+                <div class="mb-3 w-100">
+                    <input type="text" class="form-control text-center w-100" name="album_query" placeholder="Search for albums...">
+                </div>
+                <button type="submit" class="btn btn-dark w-100">Search</button>
+            </form>
+
+            <div class="mt-4 w-100">
+                <h5 class="fw-bold">Suggestions</h5>
+                <ul class="list-group">
+                    {% for song in recommended_songs %}
+                        <li class="list-group-item">{{ song.title }} - {{ song.artist }}</li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">No recommendations available.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Column: Highest Rated Songs -->
+        <div class="col-md-3 ms-md-5 text-center d-flex flex-column align-items-center">
+            <h3 class="fw-bold">Highest Rated Songs</h3>
+            <ul class="list-group w-100">
+                {% for song in highest_rated_songs %}
+                    <li class="list-group-item">{{ forloop.counter }}. {{ song.title }} - {{ song.artist }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
