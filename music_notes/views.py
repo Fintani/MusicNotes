@@ -10,7 +10,7 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from .forms import EditAccountForm
 from django.contrib import messages
-from .models import UserProfile, Album, Song, AlbumReview, SongReview
+from .models import UserProfile, Artist, Album, Song, AlbumReview, SongReview
 
 
 from music_notes.models import Category
@@ -171,8 +171,20 @@ def visitor_cookie_handler(request):
 def search(request):
     return render(request, "music_notes/search_results.html")   # This is justt placeholder.
 
-def album_detail(request, album_id):
-    album = get_object_or_404(Album, id=album_id)
+def artist_detail(request, artist_name):
+    artist_name = artist_name.replace('-', ' ')
+    artist = get_object_or_404(Artist, name=artist_name)
+    name = artist.name
+
+    return render(request, 'music_notes/artist_detail.html', {
+        'name': name
+    })
+
+def album_detail(request, artist_name, album_title):
+    artist_name = artist_name.replace('-', ' ')
+    album_title = album_title.replace('-', ' ')
+    artist = get_object_or_404(Artist, name=artist_name)
+    album = get_object_or_404(Album, artist=artist, title=album_title)
     songs = album.songs.all()
     artist = album.artist
     release_date = album.release_date
@@ -184,8 +196,13 @@ def album_detail(request, album_id):
         'release_date': release_date
     })
 
-def song_detail(request, song_id):
-    song = get_object_or_404(Song, id=song_id)
+def song_detail(request, artist_name, album_title, song_title):
+    artist_name = artist_name.replace('-', ' ')
+    album_title = album_title.replace('-', ' ')
+    song_title = song_title.replace('-', ' ')
+    artist = get_object_or_404(Artist, name=artist_name)
+    album = get_object_or_404(Album, artist=artist, title=album_title)
+    song = get_object_or_404(Song, album = album, title=song_title)
     album = song.album
     duration = song.duration
 
