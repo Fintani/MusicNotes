@@ -10,11 +10,17 @@
 <h2>Details for Album - {{ album.title }}</h2>
 <p>Artist: {{ album.artist }}</p>
 <p>Release Date : {{album.release_date}}</p>
-<h4>Songs:</h4>
 <div>
-    {% for song in songs %}
-    <p>{{ song.title }}</p>
-    {% endfor %}
+    <h4>Songs:</h4>
+    {% if songs %}
+        <ul>
+            {% for song in songs %}
+                <li>{{ song.title }} - {{ song.duration }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No songs available.</p>
+    {% endif %}
 </div>
 <!-- Overall Score not implemented -->
 <!-- reviews not implemented -->

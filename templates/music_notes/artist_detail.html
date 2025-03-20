@@ -7,15 +7,27 @@
 {% block body_block %}
     <h2>Details for Artist - {{ artist.name }}</h2>
     <div>
-        <h4>Songs:</h4>
-        {% for song in songs %}
-        <p>{{ song.title }}</p>
-        {% endfor %}
+        <h4>Albums:</h4>
+        {% if albums %}
+            <ul>
+                {% for album in albums %}
+                    <li>{{ album.title }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No albums available.</p>
+        {% endif %}
     </div>
     <div>
-        <h4>Albums:</h4>
-        {% for album in albums %}
-        <p>{{ album.title }}</p>
-        {% endfor %}
+        <h4>Songs:</h4>
+        {% if songs %}
+            <ul>
+                {% for song in songs %}
+                    <li>{{ song.title }} - {{ song.duration }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No songs available.</p>
+        {% endif %}
     </div>
 {% endblock %}
