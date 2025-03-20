@@ -35,9 +35,6 @@ def index(request):
 
 def about(request):
     context_dict={}
-
-    visitor_cookie_handler(request)
-    context_dict["visits"] = request.session["visits"]
     #replace these with real values
     context_dict["song_count"] = 100
     context_dict["album_count"] = 100

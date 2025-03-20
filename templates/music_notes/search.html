@@ -5,8 +5,19 @@
 {% endblock %}
 
 {% block body_block %}
+    <h2 class="fw-bold">Search</h2>
     {% if song_query %}
-        <h2>{{ song_query }}: </h2> <br/>
+        <div class="col-md-4 text-center d-flex align-items-center">
+            <form method="POST" action="{% url 'music_notes:search' %}" class="w-100">
+
+                {% csrf_token %}
+                <div>
+                    <input type="text" class="form-control text-center w-100" name="song_query" placeholder="{{ song_query }}">
+                    <button type="submit" class="btn btn-dark w-100">Search</button>
+                </div>
+            </form>
+        </div>
+        <br/>
         <h3>Albums:</h3>
         {% for album in albums %}
             {{ album }}<br/>
@@ -15,5 +26,18 @@
         {% for song in songs %}
             {{ song }}<br/>
         {% endfor %}
+    {% else %}
+        <div class="col-md-4 text-center d-flex align-items-center justify-content-center">
+            <form method="POST" action="{% url 'music_notes:search' %}" class="w-100">
+
+            {% csrf_token %}
+                <div class="p-2">
+                    <input type="text" class="form-control text-center w-100" name="song_query" placeholder="search">
+                </div>
+               <div class="p-2">
+                   <button type="submit" class="btn btn-dark w-50">Search</button>
+              </div>
+            </form>
+    </div>
     {% endif %}
 {% endblock %}
