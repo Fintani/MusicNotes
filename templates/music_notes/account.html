@@ -13,8 +13,15 @@
         <!-- Left Column: Profile Info -->
         <div class="col-md-4 d-flex flex-column align-items-center">
         <!-- Profile Picture -->
-        <img src="{{ user.userprofile.picture.url }}" alt="Profile Picture"
-            class="rounded-circle shadow-sm mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+        {% if user.userprofile.picture %}
+            <img src="{{ user.userprofile.picture.url }}" alt="Profile Picture"
+                class="rounded-circle shadow-sm mb-3"
+                style="width: 150px; height: 150px; object-fit: cover;">
+        {% else %}
+            <img src="{% static 'images/default_profile.jpg' %}" alt="Default Profile Picture"
+                class="rounded-circle shadow-sm mb-3"
+                style="width: 150px; height: 150px; object-fit: cover;">
+        {% endif %}
 
 
             <!-- Username -->

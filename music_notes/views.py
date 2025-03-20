@@ -51,7 +51,7 @@ def register(request):
 
     if request.method == "POST":
         user_form = UserForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
+        profile_form = UserProfileForm(request.POST, request.FILES)
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
@@ -126,13 +126,17 @@ def account(request):
 def edit_account(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
 
+    if created and not user_profile.picture:
+        user_profile.picture = "profile_images/default_profile.jpg"
+        user_profile.save()
+
     if request.method == "POST":
         form = EditAccountForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
 
-            if "profile_picture" in request.FILES:
-                user_profile.picture = request.FILES["profile_picture"]
+            if "picture" in request.FILES:
+                user_profile.picture = request.FILES["picture"]
                 user_profile.save()
 
             messages.success(request, "Your account has been updated successfully!")
