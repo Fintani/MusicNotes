@@ -13,8 +13,6 @@ from django.contrib import messages
 from .models import UserProfile, Artist, Album, Song, AlbumReview, SongReview
 
 
-from music_notes.models import Category
-from music_notes.models import Page
 from music_notes.forms import CategoryForm
 from music_notes.forms import PageForm
 from music_notes.forms import UserForm, UserProfileForm
@@ -175,18 +173,23 @@ def search(request):
         song_query = request.POST["song_query"]
         context_dict["song_query"] = song_query
 
-        albums = Category.objects.filter(name__contains=song_query)
-        context_dict["albums"] = albums
-
-        songs = Page.objects.filter(title__contains=song_query)
+        songs = Song.objects.filter(title__contains=song_query)
         context_dict["songs"] = songs
+
+        albums = Album.objects.filter(title__contains=song_query)
+        context_dict["albums"] = albums
+        
+
+
+        artists = Artist.objects.filter(name__contains=song_query)
+        context_dict["artists"] = artists
+
         return render(request, "music_notes/search.html",context_dict)
     else:
         return render(request, "music_notes/search.html")
 
 def artist_detail(request, artist_name):
-    artist_name = artist_name.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
+    artist = get_object_or_404(Artist, slug=artist_name)
     name = artist.name
     albums = artist.albums.all()
     songs = artist.songs.all()
@@ -199,10 +202,8 @@ def artist_detail(request, artist_name):
     })
 
 def album_detail(request, artist_name, album_title):
-    artist_name = artist_name.replace('-', ' ')
-    album_title = album_title.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
-    album = get_object_or_404(Album, artist=artist, title=album_title)
+    artist = get_object_or_404(Artist, slug=artist_name)
+    album = get_object_or_404(Album, artist=artist, slug=album_title)
     songs = album.songs.all()
     artist = album.artist
     release_date = album.release_date
@@ -215,12 +216,9 @@ def album_detail(request, artist_name, album_title):
     })
 
 def song_detail(request, artist_name, album_title, song_title):
-    artist_name = artist_name.replace('-', ' ')
-    album_title = album_title.replace('-', ' ')
-    song_title = song_title.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
-    album = get_object_or_404(Album, artist=artist, title=album_title)
-    song = get_object_or_404(Song, artist = artist, album = album, title=song_title)
+    artist = get_object_or_404(Artist, slug=artist_name)
+    album = get_object_or_404(Album, artist=artist, slug=album_title)
+    song = get_object_or_404(Song, artist=artist, album=album, slug=song_title)
     album = song.album
     artist = song.artist
     duration = song.duration
