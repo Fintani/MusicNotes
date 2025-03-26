@@ -205,7 +205,7 @@ def album_detail(request, artist_slug, album_slug):
     release_date = album.release_date
     #reviews
     page = request.GET.get('page', 1)
-    all_reviews = AlbumReview.objects.select_related('album', 'user').order_by('-created_at')
+    all_reviews = AlbumReview.objects.filter(album=album).select_related('user').order_by('-created_at')
     paginator = Paginator(all_reviews, 5)  # 5 reviews per page
     reviews = paginator.get_page(page)
 
@@ -219,18 +219,26 @@ def album_detail(request, artist_slug, album_slug):
     })
 
 def song_detail(request, artist_slug, album_slug, song_slug):
+    #details
     song = get_object_or_404(
         Song,
         slug=song_slug,
         album__slug=album_slug,
         album__artist__slug=artist_slug
     )
+    #reviews
+    page = request.GET.get('page', 1)
+    all_reviews = SongReview.objects.filter(song=song).select_related('user').order_by('-created_at')
+    paginator = Paginator(all_reviews, 5)  # 5 reviews per page
+    reviews = paginator.get_page(page)
 
     return render(request, 'music_notes/song_detail.html', {
         'song': song,
         'album': song.album,
         'artist': song.album.artist,
         'duration': song.duration,
+        'reviews': reviews,
+        'total_reviews': paginator.count,
     })
 
 
