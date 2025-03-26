@@ -1,70 +1,57 @@
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE",
-                      "tango_with_django_project.settings")
+                      "music_notes_project.settings")
 
 import django
+import datetime
 django.setup()
-from music_notes.models import Category, Page
+from music_notes.models import Song, Album, Artist
 
 def populate():
-    python_pages = [
-        {'title': 'Official Python Tutorial',
-         'url':'http://docs.python.org/3/tutorial/',
-         "views" : 10},
-        {'title':'How to Think like a Computer Scientist',
-        'url':'http://www.greenteapress.com/thinkpython/',
-        "views" : 11},
-        {'title':'Learn Python in 10 Minutes',
-        'url':'http://www.korokithakis.net/tutorials/python/',
-        "views" : 12} 
+    theboywiththearabstrap_songs = [
+        {'title': 'Ease Your Feet in the Sea',
+         "duration" : datetime.timedelta(minutes=3, seconds=35)},
+        {'title':'A Summer Wasting',
+        "duration" : datetime.timedelta(minutes=2, seconds=6)},
+        {'title':'The boy With the Arab Strap',
+        "duration" : datetime.timedelta(minutes=5, seconds=14)} 
     ]
 
-    django_pages = [
-        {'title':'Official Django Tutorial',
-        'url':'https://docs.djangoproject.com/en/2.1/intro/tutorial01/',
-        "views" : 13},
-        {'title':'Django Rocks',
-        'url':'http://www.djangorocks.com/',
-        "views" : 1},
-        {'title':'How to Tango with Django',
-        'url':'http://www.tangowithdjango.com/',
-        "views" : 17}
-    ]
-
-    other_pages = [
-        {'title':'Bottle',
-        'url':'http://bottlepy.org/docs/dev/',
-        "views" : 10},
-        {'title':'Flask',
-        'url':'http://flask.pocoo.org',
-        "views" : 100} 
-    ]
-
-    cats = {
-        'Python': {'pages': python_pages, "views":128,"likes":64},
-        'Django': {'pages': django_pages, "views":64,"likes":32},
-        'Other Frameworks': {'pages': other_pages, "views":32,"likes":16} 
+    belleandsebastian_albums = {
+        'The Boy With the Arab Strap' : {'release':'1998-01-01',
+                                         "songs" : theboywiththearabstrap_songs}
     }
 
-    for cat, cat_data in cats.items():
-        c = add_cat(cat, cat_data["views"], cat_data['likes'])
-        for p in cat_data["pages"]:
-            add_page(c, p["title"], p["url"], p["views"])
+    artists = {
+        'Belle and Sebastian': {'albums': belleandsebastian_albums},
+    }
 
-    for c in Category.objects.all():
-        for p in Page.objects.filter(category=c):
-            print(f"- {c}: {p}")
+    for artist, artist_data in artists.items():
+        ar = add_artist(artist)
+        for album, album_data in artist_data["albums"].items():
+            al = add_album(album, ar, album_data["release"])
+            for s in album_data["songs"]:
+                add_song(s["title"], ar, al, s["duration"])
 
-def add_page(cat, title, url, views=0):
-    p = Page.objects.get_or_create(category=cat, title=title, views=views)[0]
-    p.url = url
-    p.save()
-    return p
+    for ar in Artist.objects.all():
+        for al in Album.objects.filter(artist=ar):
+            for s in Song.objects.filter(album=al):
+                print(f"- {ar}: {al}: {s}")
 
-def add_cat(name,views=0, likes=0):
-    c = Category.objects.get_or_create(name=name, likes=likes, views=views)[0]
-    c.save()
-    return c
+def add_song(title, artist, album, duration):
+    s = Song.objects.get_or_create(title=title, artist=artist, album=album, duration=duration)[0]
+    s.save()
+    return s
+
+def add_album(title, artist, release):
+    al = Album.objects.get_or_create(title=title, artist=artist, release_date=release)[0]
+    al.save()
+    return al
+
+def add_artist(name):
+    ar = Artist.objects.get_or_create(name=name)[0]
+    ar.save()
+    return ar
 
 if __name__ == "__main__":
     print("Starting music_notes population script...")

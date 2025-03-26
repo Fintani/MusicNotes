@@ -13,8 +13,6 @@ from django.contrib import messages
 from .models import UserProfile, Artist, Album, Song, AlbumReview, SongReview
 
 
-from music_notes.models import Category
-from music_notes.models import Page
 from music_notes.forms import CategoryForm
 from music_notes.forms import PageForm
 from music_notes.forms import UserForm, UserProfileForm
@@ -175,11 +173,17 @@ def search(request):
         song_query = request.POST["song_query"]
         context_dict["song_query"] = song_query
 
-        albums = Category.objects.filter(name__contains=song_query)
-        context_dict["albums"] = albums
-
-        songs = Page.objects.filter(title__contains=song_query)
+        songs = Song.objects.filter(title__contains=song_query)
         context_dict["songs"] = songs
+
+        albums = Album.objects.filter(title__contains=song_query)
+        context_dict["albums"] = albums
+        
+
+
+        artists = Artist.objects.filter(name__contains=song_query)
+        context_dict["artists"] = artists
+
         return render(request, "music_notes/search.html",context_dict)
     else:
         return render(request, "music_notes/search.html")
