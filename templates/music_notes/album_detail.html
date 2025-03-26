@@ -1,4 +1,5 @@
 {% extends "music_notes/base.html" %}
+{% load static %}
 
 {% block title_block %}
     Album Details
@@ -6,22 +7,55 @@
 
 {% block body_block %}
 
-<!-- album cover not implemented -->
-<h2>Details for Album - {{ album.title }}</h2>
-<p>Artist: {{ album.artist }}</p>
-<p>Release Date : {{album.release_date}}</p>
-<div>
-    <h4>Songs:</h4>
-    {% if songs %}
-        <ul>
-            {% for song in songs %}
-                <li>{{ song.title }} - {{ song.duration }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No songs available.</p>
-    {% endif %}
+
+<h2 class="fw-bold mb-5">Details for Album - {{ album.title }}</h2>
+    <div class="row mt-3">
+        <!-- Left Column: Album Info -->
+        <div class="col-md-4 d-flex flex-column align-items-center">
+            <!-- Album cover -->
+            {% if album.cover %}
+            <img src="{{ album.cover.url }}" alt="{{ album.title }} Cover"
+                class="rounded shadow-sm mb-3"
+                style="width: 200px; height: 200px; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'images/placeholder_album.jpg' %}" alt="Default Album Cover"
+                class="rounded shadow-sm mb-3"
+                style="width: 200px; height: 200px; object-fit: cover;">
+            {% endif %}
+            <!-- Album info -->
+            <h4 class="fw-bold">{{ album.title }}</h4>
+            <p>
+                Artist: <a href="{% url 'music_notes:artist_detail' artist_slug=album.artist.slug %}">{{ album.artist }}</a>
+                &nbsp;|&nbsp;
+                {{album.release_date}}
+            </p>
+            <!-- leave song review -->
+            {% if user.is_authenticated %}
+                <!-- !!!!FalseLink just a placeholder -->
+                <a href="{% url 'music_notes:edit_account' %}" class="btn btn-outline-primary mt-3">Leave a Review</a>
+            {% else %}
+                <a href="{% url 'music_notes:login' %}" class="btn btn-outline-primary mt-3">Log in to leave a review</a>
+            {% endif %}
+        </div>
+
+
+        <!-- Right Column: Ratings -->
+        <div class="col-md-8">
+            <div class="col-md-4 d-flex flex-column align-items-center">
+                <!-- songs in the album -->
+                <h4>Songs:</h4>
+                {% if songs %}
+                    <ul>
+                        {% for song in songs %}
+                            <li><a href="{% url 'music_notes:song_detail' artist_slug=song.artist.slug album_slug=song.album.slug song_slug=song.slug%}">{{ song.title }}</a> - {{ song.duration }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No songs available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
-<!-- Overall Score not implemented -->
-<!-- reviews not implemented -->
+
 {% endblock %}

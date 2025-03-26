@@ -184,9 +184,8 @@ def search(request):
     else:
         return render(request, "music_notes/search.html")
 
-def artist_detail(request, artist_name):
-    artist_name = artist_name.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
+def artist_detail(request, artist_slug):
+    artist = get_object_or_404(Artist, slug=artist_slug)
     name = artist.name
     albums = artist.albums.all()
     songs = artist.songs.all()
@@ -198,39 +197,40 @@ def artist_detail(request, artist_name):
         'songs': songs
     })
 
-def album_detail(request, artist_name, album_title):
-    artist_name = artist_name.replace('-', ' ')
-    album_title = album_title.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
-    album = get_object_or_404(Album, artist=artist, title=album_title)
+def album_detail(request, artist_slug, album_slug):
+    #details
+    album = get_object_or_404(Album, slug=album_slug, artist__slug=artist_slug)
     songs = album.songs.all()
     artist = album.artist
     release_date = album.release_date
+    #reviews
+    page = request.GET.get('page', 1)
+    all_reviews = AlbumReview.objects.select_related('album', 'user').order_by('-created_at')
+    paginator = Paginator(all_reviews, 5)  # 5 reviews per page
+    reviews = paginator.get_page(page)
 
     return render(request, 'music_notes/album_detail.html', {
         'album': album,
         'songs': songs,
         'artist': artist,
-        'release_date': release_date
+        'release_date': release_date,
+        'reviews': reviews,
+        'total_reviews': paginator.count,
     })
 
-def song_detail(request, artist_name, album_title, song_title):
-    artist_name = artist_name.replace('-', ' ')
-    album_title = album_title.replace('-', ' ')
-    song_title = song_title.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
-    album = get_object_or_404(Album, artist=artist, title=album_title)
-    song = get_object_or_404(Song, artist = artist, album = album, title=song_title)
-    album = song.album
-    artist = song.artist
-    duration = song.duration
-    
+def song_detail(request, artist_slug, album_slug, song_slug):
+    song = get_object_or_404(
+        Song,
+        slug=song_slug,
+        album__slug=album_slug,
+        album__artist__slug=artist_slug
+    )
 
     return render(request, 'music_notes/song_detail.html', {
-        'artist': artist,
         'song': song,
-        'album': album,
-        'duration': duration
+        'album': song.album,
+        'artist': song.album.artist,
+        'duration': song.duration,
     })
 
 
