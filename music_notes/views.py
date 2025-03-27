@@ -155,7 +155,7 @@ def add(request):
     if request.method == "POST":
         album_title = request.POST["title"]
         artist_name = request.POST["artist"]
-        album_cover = request.FILES["cover"]
+        album_cover = request.POST["cover"]
         
         artists = Artist.objects.filter(name=artist_name)
         
