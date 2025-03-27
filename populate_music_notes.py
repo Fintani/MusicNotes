@@ -9,12 +9,9 @@ from music_notes.models import Song, Album, Artist
 
 def populate():
     theboywiththearabstrap_songs = [
-        {'title': 'Ease Your Feet in the Sea',
-         "duration" : datetime.timedelta(minutes=3, seconds=35)},
-        {'title':'A Summer Wasting',
-        "duration" : datetime.timedelta(minutes=2, seconds=6)},
-        {'title':'The boy With the Arab Strap',
-        "duration" : datetime.timedelta(minutes=5, seconds=14)} 
+        {'title': 'Ease Your Feet in the Sea'},
+        {'title':'A Summer Wasting'},
+        {'title':'The boy With the Arab Strap'} 
     ]
 
     belleandsebastian_albums = {
@@ -29,22 +26,22 @@ def populate():
     for artist, artist_data in artists.items():
         ar = add_artist(artist)
         for album, album_data in artist_data["albums"].items():
-            al = add_album(album, ar, album_data["release"])
+            al = add_album(album, ar)
             for s in album_data["songs"]:
-                add_song(s["title"], ar, al, s["duration"])
+                add_song(s["title"], ar, al)
 
     for ar in Artist.objects.all():
         for al in Album.objects.filter(artist=ar):
             for s in Song.objects.filter(album=al):
                 print(f"- {ar}: {al}: {s}")
 
-def add_song(title, artist, album, duration):
-    s = Song.objects.get_or_create(title=title, artist=artist, album=album, duration=duration)[0]
+def add_song(title, artist, album):
+    s = Song.objects.get_or_create(title=title, artist=artist, album=album)[0]
     s.save()
     return s
 
-def add_album(title, artist, release):
-    al = Album.objects.get_or_create(title=title, artist=artist, release_date=release)[0]
+def add_album(title, artist):
+    al = Album.objects.get_or_create(title=title, artist=artist)[0]
     al.save()
     return al
 
