@@ -40,6 +40,18 @@
         </div>
 
     <div class="col-md-8">
+        <div class="fw-bold text-center">
+            <div class="border border-2 rounded p-3 d-inline-block">
+                {% if average_rating %}
+                <h2 class="fw-bold m-0">AVG RATING</h2>
+                <h2 class="fw-bold m-0">{{ average_rating|floatformat:1 }} / 5</h2>
+                {% else %}
+                <h2 class="fw-bold m-0">AVG RATING</h2>
+                <h2 class="fw-bold m-0">--- / 5</h2>
+                {% endif %}
+            </div>
+        </div>
+        <p class="fw-bold text-center" ></p>
         <h4 class="fw-bold text-center">Ratings</h4>
         <div class="table-responsive">
             <table class="table table-striped shadow-sm text-center">

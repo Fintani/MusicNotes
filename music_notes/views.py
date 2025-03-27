@@ -10,6 +10,7 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from .forms import EditAccountForm
 from django.contrib import messages
+from django.db.models import Avg
 from .models import UserProfile, Artist, Album, Song, AlbumReview, SongReview
 
 
@@ -212,6 +213,8 @@ def album_detail(request, artist_slug, album_slug):
     all_reviews = AlbumReview.objects.filter(album=album).select_related('user').order_by('-created_at')
     paginator = Paginator(all_reviews, 5)  # 5 reviews per page
     reviews = paginator.get_page(page)
+    #average rating
+    average_rating = all_reviews.aggregate(Avg('rating'))['rating__avg']
 
     return render(request, 'music_notes/album_detail.html', {
         'album': album,
@@ -220,6 +223,7 @@ def album_detail(request, artist_slug, album_slug):
         'release_date': release_date,
         'reviews': reviews,
         'total_reviews': paginator.count,
+        'average_rating': average_rating,
     })
 
 def song_detail(request, artist_slug, album_slug, song_slug):
@@ -235,6 +239,8 @@ def song_detail(request, artist_slug, album_slug, song_slug):
     all_reviews = SongReview.objects.filter(song=song).select_related('user').order_by('-created_at')
     paginator = Paginator(all_reviews, 5)  # 5 reviews per page
     reviews = paginator.get_page(page)
+    #average rating
+    average_rating = all_reviews.aggregate(Avg('rating'))['rating__avg']
 
     return render(request, 'music_notes/song_detail.html', {
         'song': song,
@@ -243,6 +249,7 @@ def song_detail(request, artist_slug, album_slug, song_slug):
         'duration': song.duration,
         'reviews': reviews,
         'total_reviews': paginator.count,
+        'average_rating': average_rating,
     })
 
 
