@@ -1,0 +1,89 @@
+{% extends "music_notes/base.html" %}
+{% load static %}
+
+{% block title_block %}
+    My Account
+{% endblock %}
+
+{% block body_block %}
+<div class="container mt-4">
+    <h2 class="fw-bold mb-5">Account Detail</h2>
+
+    <div class="row mt-3">
+        <!-- Left Column: Profile Info -->
+        <div class="col-md-4 d-flex flex-column align-items-center">
+        <!-- Profile Picture -->
+        {% if user.userprofile.picture %}
+            <img src="{{ user.userprofile.picture.url }}" alt="Profile Picture"
+                class="rounded-circle shadow-sm mb-3"
+                style="width: 150px; height: 150px; object-fit: cover;">
+        {% else %}
+            <img src="{% static 'images/default_profile.jpg' %}" alt="Default Profile Picture"
+                class="rounded-circle shadow-sm mb-3"
+                style="width: 150px; height: 150px; object-fit: cover;">
+        {% endif %}
+
+
+            <!-- Username -->
+            <h4 class="fw-bold">{{ user.username }}</h4>
+
+            <!-- Total Ratings Counter -->
+            <p class="text-muted">This person has uploaded ({{ total_ratings }}) ratings</p>
+
+            <!-- Edit Account Button -->
+            <a href="{% url 'music_notes:edit_account' %}" class="btn btn-outline-primary mt-3">Edit Account</a>
+
+        </div>
+
+        <!-- Ratings List -->
+        <div class="col-md-8">
+            <h4 class="fw-bold text-center">Ratings</h4>
+            
+            <!-- Ratings Table -->
+            <div class="table-responsive">
+                <table class="table table-striped shadow-sm text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Rating</th>
+                            <th>Song/Album</th>
+                            <th>Artist</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rating in ratings %}
+                        <tr>
+                            <td>{{ rating.value }}/5</td>
+                            <td>{{ rating.song_or_album }}</td>
+                            <td>{{ rating.artist }}</td>
+                            <td>{{ rating.date }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No ratings available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between">
+                {% if ratings.has_previous %}
+                    <a href="?page={{ ratings.previous_page_number }}" class="btn btn-outline-dark">Previous Page</a>
+                {% else %}
+                    <button class="btn btn-outline-dark disabled">Previous Page</button>
+                {% endif %}
+
+                <p class="fw-bold">Page {{ ratings.number }} of {{ ratings.paginator.num_pages }}</p>
+
+                {% if ratings.has_next %}
+                    <a href="?page={{ ratings.next_page_number }}" class="btn btn-outline-dark">Next Page</a>
+                {% else %}
+                    <button class="btn btn-outline-dark disabled">Next Page</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
