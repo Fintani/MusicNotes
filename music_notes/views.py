@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg
 from django.http import HttpResponse
 from datetime import datetime
 from django.core.paginator import Paginator
@@ -41,7 +42,27 @@ def about(request):
     return render(request, "music_notes/about.html", context=context_dict)
 
 def browse(request):
-    return render(request, 'music_notes/browse.html')
+    #artists
+    page1 = request.GET.get('page', 1)
+    all_artists = Artist.objects.order_by('name')
+    paginator1 = Paginator(all_artists, 8)  # 8 artist per page
+    artists = paginator1.get_page(page1)
+    #albums
+    page2 = request.GET.get('page', 1)
+    all_albums = Album.objects.order_by('title')
+    paginator2 = Paginator(all_albums, 8)  # 8 albums per page
+    albums = paginator2.get_page(page2)
+    #songs
+    page3 = request.GET.get('page', 1)
+    all_songs = Song.objects.order_by('title')
+    paginator3 = Paginator(all_songs, 8)  # 8 songs per page
+    songs = paginator3.get_page(page3)
+
+    return render(request, 'music_notes/browse.html',{
+        'artists': artists,
+        'albums': albums,
+        'songs': songs,
+    })
 
 
 def register(request):

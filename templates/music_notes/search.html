@@ -25,11 +25,11 @@
         <div class="d-flex flex-row m-3 py-2 w-50 border">
             <div class="px-3">
             {% if album.cover_image %}
-                <img class="w-25" src="{{ album.cover_image.url }}" alt="{{ album }} cover"
-                style="width: 150px; height: 150px; object-fit: cover;">
+                <img src="{{ album.cover_image.url }}" alt="{{ album }} cover"
+                style="width: 80px; height: 80px;">
             {% else %}
                 <img src="{% static 'images/placeholder_album.jpg' %}" alt="{{ album }} cover"
-                class="img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
+                class="img-fluid" style="width: 80px; height: 80px;">
             {% endif %}
             </div>
             <div class="d-flex flex-column">
@@ -43,7 +43,7 @@
         <div class="d-flex flex-row m-3 py-2 w-50 border">
             <div class="px-3">
             {% if song.album.cover_image %}
-                <img class="w-25" src="{{ album.cover_image.url }}" alt="{{ album }} cover"
+                <img src="{{ album.cover_image.url }}" alt="{{ album }} cover"
                 style="width: 150px; height: 150px; object-fit: cover;">
             {% else %}
                 <img src="{% static 'images/placeholder_album.jpg' %}" alt="{{ album }} cover"
@@ -62,7 +62,7 @@
         <div class="d-flex flex-row m-3 py-2 w-50 border">
             <div class="px-3">
             {% if artist.profile_picture %}
-                <img class="w-25" src="{{ artist.profile_picture.url }}" alt="{{ album }} cover"
+                <img src="{{ artist.profile_picture.url }}" alt="{{ album }} cover"
                 class="rounded-circle shadow-sm mb-3" style="width: 150px; height: 150px; object-fit: cover;">
             {% else %}
                 <img src="{% static 'images/default_profile.jpg' %}" alt="{{ album }} cover"
