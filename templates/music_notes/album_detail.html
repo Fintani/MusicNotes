@@ -56,9 +56,9 @@
         <div class="col-md-8">
             <div class="fw-bold text-center">
                 <div class="border border-2 rounded p-3 d-inline-block">
-                    {% if average_rating %}
+                    {% if album.averageRating %}
                     <h2 class="fw-bold m-0">AVG RATING</h2>
-                    <h2 class="fw-bold m-0">{{ average_rating|floatformat:1 }} / 5</h2>
+                    <h2 class="fw-bold m-0">{{ album.averageRating|floatformat:1 }} / 5</h2>
                     {% else %}
                     <h2 class="fw-bold m-0">AVG RATING</h2>
                     <h2 class="fw-bold m-0">--- / 5</h2>

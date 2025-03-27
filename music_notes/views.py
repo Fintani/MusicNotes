@@ -145,7 +145,7 @@ def account(request):
     
     context = {
         "user": request.user,
-        "total_ratings": len(reviews),
+        "total_ratings": len(user_reviews),
         "ratings": ratings,
     }
     return render(request, "music_notes/account.html", context)
