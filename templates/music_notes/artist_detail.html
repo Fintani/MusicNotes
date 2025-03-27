@@ -1,33 +1,57 @@
 {% extends "music_notes/base.html" %}
+{% load static %}
 
 {% block title_block %}
     Artist Detail
 {% endblock %}
 
 {% block body_block %}
-    <h2>Details for Artist - {{ artist.name }}</h2>
-    <div>
-        <h4>Albums:</h4>
-        {% if albums %}
-            <ul>
-                {% for album in albums %}
-                    <li>{{ album.title }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No albums available.</p>
-        {% endif %}
+<div class="container mt-4">
+    <h2 class="fw-bold mb-5">Details for Artist - {{ artist.name }}</h2>
+    <!-- Left Column: Artist info -->
+    <div class="row mt-3">
+        <div class="col-md-4 d-flex flex-column align-items-center">
+            {% if artist.profile_picture %}
+            <img src="{{ artist.profile_picture.url }}" alt="{{ artist.name }} profile picture"
+                class="rounded shadow-sm mb-3"
+                style="width: 200px; height: 200px; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'images/default_profile.jpg' %}" alt="Default Album Cover"
+                class="rounded shadow-sm mb-3"
+                style="width: 200px; height: 200px; object-fit: cover;">
+            {% endif %}
+
+            <h4 class="fw-bold">{{ artist.name }}</h4>
+            
+        </div>
+
+        <!-- Right Column: Albums -->
+        <div class="col-md-8">
+            <h4 class="fw-bold text-center">Albums</h4>
+            <!-- Songs Table -->
+            <div class="table-responsive">
+                <table class="table table-striped shadow-sm text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Average rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for album in albums %}
+                        <tr>
+                            <td><a href="{% url 'music_notes:album_detail' artist_slug=album.artist.slug album_slug=album.slug%}">{{ album.title }}</a></td>
+                            <td>{{album.averageRating}}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No Albums available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <div>
-        <h4>Songs:</h4>
-        {% if songs %}
-            <ul>
-                {% for song in songs %}
-                    <li>{{ song.title }} - {{ song.duration }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No songs available.</p>
-        {% endif %}
-    </div>
+</div>
 {% endblock %}

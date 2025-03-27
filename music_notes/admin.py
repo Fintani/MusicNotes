@@ -14,12 +14,12 @@ class ArtistAdmin(admin.ModelAdmin):
 
 # Register Album
 class AlbumAdmin(admin.ModelAdmin):
-    list_display = ('title', 'artist', 'release_date')  # Columns shown in admin
+    list_display = ('title', 'artist')  # Columns shown in admin
     search_fields = ('title', 'artist')  # Enable search by title & artist
 
 # Register Song
 class SongAdmin(admin.ModelAdmin):
-    list_display = ('title', 'artist','album', 'duration')  # Columns shown in admin
+    list_display = ('title', 'artist','album')  # Columns shown in admin
     search_fields = ('title', 'album__title')  # Enable search by song title & album
 
 # Register AlbumReview
