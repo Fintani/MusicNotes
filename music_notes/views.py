@@ -134,6 +134,7 @@ def add(request):
     if request.method == "POST":
         album_title = request.POST["title"]
         artist_name = request.POST["artist"]
+        album_cover = request.POST["cover"]
         
         artists = Artist.objects.filter(name=artist_name)
         
@@ -143,7 +144,7 @@ def add(request):
         else:
             artist = artists[0]
         
-        album = Album(title=album_title, artist=artist)
+        album = Album(title=album_title, artist=artist, cover_image=album_cover)
         album.save()
         return redirect(reverse("music_notes:index"))
     return render(request, "music_notes/add.html")

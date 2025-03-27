@@ -59,7 +59,7 @@ class Album(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name="albums")
-    cover_image = models.ImageField(upload_to="albums/", blank=True, null=True)
+    cover_image = models.ImageField(upload_to="albums", blank=True, null=True)
     averageRating = models.DecimalField(max_digits=5, decimal_places=3, default=0)
 
     def save(self, *args, **kwargs):
