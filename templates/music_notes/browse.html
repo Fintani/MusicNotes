@@ -1,6 +1,133 @@
 {% extends "music_notes/base.html" %}
+
 {% block title_block %}Browse Music{% endblock %}
+
 {% block body_block %}
-    <h1>Browse Music</h1>
-    <p>Work in progress</p>
+<div class="container mt-4">
+    <h2 class="fw-bold mb-5">Browse:</h2>
+
+    <div class="row justify-content-between text-center">
+        <!-- Artists A-Z -->
+        <div class="col-md-4">
+            <h4 class="fw-bold text-center">Arists A-Z</h4>
+            <div class="table-responsive">
+                <table class="table table-striped shadow-sm text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for artist in artists %}
+                        <tr>
+                            <td><a href="{% url 'music_notes:artist_detail' artist_slug=artist.slug %}">{{ artist.name }}</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No Artist available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between">
+                {% if artists.has_previous %}
+                    <a href="?page={{ artists.previous_page_number }}" class="btn btn-outline-dark">Previous Page</a>
+                {% else %}
+                    <button class="btn btn-outline-dark disabled">Previous Page</button>
+                {% endif %}
+
+                <p class="fw-bold">Page {{ artists.number }} of {{ artists.paginator.num_pages }}</p>
+
+                {% if artists.has_next %}
+                    <a href="?page={{ artists.next_page_number }}" class="btn btn-outline-dark">Next Page</a>
+                {% else %}
+                    <button class="btn btn-outline-dark disabled">Next Page</button>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Albums A-Z -->
+        <div class="col-md-4">
+            <h4 class="fw-bold text-center">Albums A-Z</h4>
+            <div class="table-responsive">
+                <table class="table table-striped shadow-sm text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Artist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for album in albums %}
+                        <tr>
+                            <td><a href="{% url 'music_notes:album_detail' artist_slug=album.artist.slug album_slug=album.slug %}">{{ album.title }}</a></td>
+                            <td><a href="{% url 'music_notes:artist_detail' artist_slug=album.artist.slug %}">{{ album.artist.name }}</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No Artist available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between">
+                {% if albums.has_previous %}
+                    <a href="?page={{ albums.previous_page_number }}" class="btn btn-outline-dark">Previous Page</a>
+                {% else %}
+                    <button class="btn btn-outline-dark disabled">Previous Page</button>
+                {% endif %}
+
+                <p class="fw-bold">Page {{ albums.number }} of {{ albums.paginator.num_pages }}</p>
+
+                {% if albums.has_next %}
+                    <a href="?page={{ reviews.next_page_number }}" class="btn btn-outline-dark">Next Page</a>
+                {% else %}
+                    <button class="btn btn-outline-dark disabled">Next Page</button>
+                {% endif %}
+            </div>
+        </div>
+    
+        <div class="col-md-4">
+            <h4 class="fw-bold text-center">Songs A-Z</h4>
+            <div class="table-responsive">
+                <table class="table table-striped shadow-sm text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Artist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for song in songs %}
+                        <tr>
+                            <td><a href="{% url 'music_notes:song_detail' artist_slug=song.artist.slug album_slug=song.album.slug song_slug=song.slug %}">{{ song.title }}</a></td>
+                            <td><a href="{% url 'music_notes:artist_detail' artist_slug=song.artist.slug %}">{{ song.artist.name }}</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No Song available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between">
+                {% if songs.has_previous %}
+                    <a href="?page={{ songs.previous_page_number }}" class="btn btn-outline-dark">Previous Page</a>
+                {% else %}
+                    <button class="btn btn-outline-dark disabled">Previous Page</button>
+                {% endif %}
+
+                <p class="fw-bold">Page {{ songs.number }} of {{ songs.paginator.num_pages }}</p>
+
+                {% if songs.has_next %}
+                    <a href="?page={{ reviews.next_page_number }}" class="btn btn-outline-dark">Next Page</a>
+                {% else %}
+                    <button class="btn btn-outline-dark disabled">Next Page</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
