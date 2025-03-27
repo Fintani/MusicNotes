@@ -13,8 +13,6 @@ from django.contrib import messages
 from .models import UserProfile, Artist, Album, Song, AlbumReview, SongReview
 
 
-from music_notes.models import Category
-from music_notes.models import Page
 from music_notes.forms import CategoryForm
 from music_notes.forms import PageForm
 from music_notes.forms import UserForm, UserProfileForm
@@ -36,9 +34,10 @@ def index(request):
 
 def about(request):
     context_dict={}
-
-    visitor_cookie_handler(request)
-    context_dict["visits"] = request.session["visits"]
+    #replace these with real values
+    context_dict["song_count"] = 100
+    context_dict["album_count"] = 100
+    context_dict["artist_count"] = 100
 
     return render(request, "music_notes/about.html", context=context_dict)
 
@@ -169,11 +168,28 @@ def visitor_cookie_handler(request):
     request.session["visits"] = visits
 
 def search(request):
-    return render(request, "music_notes/search_results.html")   # This is justt placeholder.
+    context_dict = {}
+    if request.method == "POST":
+        song_query = request.POST["song_query"]
+        context_dict["song_query"] = song_query
 
-def artist_detail(request, artist_name):
-    artist_name = artist_name.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
+        songs = Song.objects.filter(title__contains=song_query)
+        context_dict["songs"] = songs
+
+        albums = Album.objects.filter(title__contains=song_query)
+        context_dict["albums"] = albums
+        
+
+
+        artists = Artist.objects.filter(name__contains=song_query)
+        context_dict["artists"] = artists
+
+        return render(request, "music_notes/search.html",context_dict)
+    else:
+        return render(request, "music_notes/search.html")
+
+def artist_detail(request, artist_slug):
+    artist = get_object_or_404(Artist, slug=artist_slug)
     name = artist.name
     albums = artist.albums.all()
     songs = artist.songs.all()
@@ -185,39 +201,48 @@ def artist_detail(request, artist_name):
         'songs': songs
     })
 
-def album_detail(request, artist_name, album_title):
-    artist_name = artist_name.replace('-', ' ')
-    album_title = album_title.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
-    album = get_object_or_404(Album, artist=artist, title=album_title)
+def album_detail(request, artist_slug, album_slug):
+    #details
+    album = get_object_or_404(Album, slug=album_slug, artist__slug=artist_slug)
     songs = album.songs.all()
     artist = album.artist
     release_date = album.release_date
+    #reviews
+    page = request.GET.get('page', 1)
+    all_reviews = AlbumReview.objects.filter(album=album).select_related('user').order_by('-created_at')
+    paginator = Paginator(all_reviews, 5)  # 5 reviews per page
+    reviews = paginator.get_page(page)
 
     return render(request, 'music_notes/album_detail.html', {
         'album': album,
         'songs': songs,
         'artist': artist,
-        'release_date': release_date
+        'release_date': release_date,
+        'reviews': reviews,
+        'total_reviews': paginator.count,
     })
 
-def song_detail(request, artist_name, album_title, song_title):
-    artist_name = artist_name.replace('-', ' ')
-    album_title = album_title.replace('-', ' ')
-    song_title = song_title.replace('-', ' ')
-    artist = get_object_or_404(Artist, name=artist_name)
-    album = get_object_or_404(Album, artist=artist, title=album_title)
-    song = get_object_or_404(Song, artist = artist, album = album, title=song_title)
-    album = song.album
-    artist = song.artist
-    duration = song.duration
-    
+def song_detail(request, artist_slug, album_slug, song_slug):
+    #details
+    song = get_object_or_404(
+        Song,
+        slug=song_slug,
+        album__slug=album_slug,
+        album__artist__slug=artist_slug
+    )
+    #reviews
+    page = request.GET.get('page', 1)
+    all_reviews = SongReview.objects.filter(song=song).select_related('user').order_by('-created_at')
+    paginator = Paginator(all_reviews, 5)  # 5 reviews per page
+    reviews = paginator.get_page(page)
 
     return render(request, 'music_notes/song_detail.html', {
-        'artist': artist,
         'song': song,
-        'album': album,
-        'duration': duration
+        'album': song.album,
+        'artist': song.album.artist,
+        'duration': song.duration,
+        'reviews': reviews,
+        'total_reviews': paginator.count,
     })
 
 

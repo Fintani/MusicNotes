@@ -44,16 +44,28 @@ class UserProfile(models.Model):
     
 class Artist(models.Model):
     name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
     profile_picture = models.ImageField(upload_to="artists/", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
 class Album(models.Model):
     title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name="albums")
     release_date = models.DateField()
     cover_image = models.ImageField(upload_to="albums/", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -63,9 +75,15 @@ class Song(models.Model):
         return Artist.objects.get_or_create(name="Unknown Artist")[0].id
     
     title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, default=default_artist, related_name="songs")
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="songs")
     duration = models.DurationField()
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
