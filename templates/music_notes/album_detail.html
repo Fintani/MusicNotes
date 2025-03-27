@@ -34,7 +34,7 @@
                 {% csrf_token %}
 
                 <div class="slidecontainer">
-                    <label for="rating" class="form-label">Rating:</label>
+                    <label for="rating" class="form-label">Rating: <span id="rateNumber"></span></label>
                     <input type="range" min="1", max="5" class="form-control" name="rating" id="rating" required>
                 </div>
 
@@ -50,6 +50,16 @@
             {% endif %}
             {% endif %}
         </div>
+
+        <script>
+            var slider = document.getElementById("rating");
+            var output = document.getElementById("rateNumber");
+            output.innerHTML = slider.value; 
+            slider.oninput = function() {
+                output.innerHTML = this.value;
+            } 
+        </script>
+
 
 
         <!-- Right Column: Ratings -->
