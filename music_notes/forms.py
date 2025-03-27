@@ -1,5 +1,5 @@
 from django import forms
-from music_notes.models import Page, Category, UserProfile
+from music_notes.models import Page, Category, UserProfile, AlbumReview, Song, SongReview
 from django.contrib.auth.models import User
 
 
@@ -41,12 +41,46 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("username","email","password",)
+        
+class AddForm(forms.ModelForm):
+    title = forms.CharField(max_length=Category.NAME_MAX_LENGTH,
+                           help_text="Please enter the category name.")
+    artist = forms.CharField(widget=forms.HiddenInput(), initial=0)
+    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        model = User
+        fields = ("title","artist",)
+        
+class AddSongForm(forms.ModelForm):
+    title = forms.CharField(max_length=255)
+    duration = forms.DurationField()
+    
+    class Meta:
+        model = Song
+        exclude = ("artist", "album",)
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ("picture",)
+        
+class AddAlbumReview(forms.ModelForm):
+    
+    rating = forms.IntegerField()
+    review = forms.CharField()
+    
+    class Meta:
+        model = AlbumReview
+        exclude = ("album", "user",)
 
+class AddSongReview(forms.ModelForm):
+    rating = forms.IntegerField()
+    review = forms.CharField()
+    
+    class Meta:
+        model = SongReview
+        exclude = ("song", "user",)
 
 class EditAccountForm(forms.ModelForm):
     profile_picture = forms.ImageField(required=False)

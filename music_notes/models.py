@@ -59,8 +59,8 @@ class Album(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name="albums")
-    release_date = models.DateField()
     cover_image = models.ImageField(upload_to="albums/", blank=True, null=True)
+    averageRating = models.DecimalField(max_digits=5, decimal_places=3, default=0)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -78,7 +78,7 @@ class Song(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, default=default_artist, related_name="songs")
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="songs")
-    duration = models.DurationField()
+    averageRating = models.DecimalField(max_digits=5, decimal_places=3, default=0)
 
     def save(self, *args, **kwargs):
         if not self.slug:

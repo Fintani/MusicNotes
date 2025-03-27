@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
+from django.db.models import Avg
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -14,18 +15,16 @@ from django.db.models import Avg
 from .models import UserProfile, Artist, Album, Song, AlbumReview, SongReview
 
 
-from music_notes.forms import CategoryForm
-from music_notes.forms import PageForm
-from music_notes.forms import UserForm, UserProfileForm
+from music_notes.forms import CategoryForm, PageForm, UserForm, UserProfileForm, AddAlbumReview, AddSongReview
 
 def index(request):
 
+    HIGHEST_RATED_ALBUMS = Album.objects.order_by('-averageRating')
+    HIGHEST_RATED_SONGS = Song.objects.order_by('-averageRating')
+
     context_dict = {
-        "popular_songs": POPULAR_SONGS,
+        "highest_rated_albums": HIGHEST_RATED_ALBUMS,
         "highest_rated_songs": HIGHEST_RATED_SONGS,
-        "song_suggestions": SONG_SUGGESTIONS,
-        "album_suggestions": ALBUM_SUGGESTIONS,
-        "recommended_songs": RECOMMENDED_SONGS,
     }
 
     visitor_cookie_handler(request)
@@ -36,9 +35,9 @@ def index(request):
 def about(request):
     context_dict={}
     #replace these with real values
-    context_dict["song_count"] = 100
-    context_dict["album_count"] = 100
-    context_dict["artist_count"] = 100
+    context_dict["song_count"] = len(Song.objects.filter())
+    context_dict["album_count"] = len(Album.objects.filter())
+    context_dict["artist_count"] = len(Artist.objects.filter())
 
     return render(request, "music_notes/about.html", context=context_dict)
 
@@ -131,15 +130,65 @@ def user_logout(request):
 @login_required
 def account(request):
     page = request.GET.get('page', 1)
-    paginator = Paginator(RATINGS_DB, 5)
+    reviews = AlbumReview.objects.filter(user=request.user)
+    
+    user_reviews = []
+    for i in reviews:
+        user_reviews.append({"value":i.rating, "artist": i.album.artist.name, "song_or_album": i.album, "date": i.created_at})
+
+    reviews = SongReview.objects.filter(user=request.user)
+    for i in reviews:
+        user_reviews.append({"value":i.rating, "artist": i.song.artist.name, "song_or_album": i.song, "date": i.created_at})
+    
+    paginator = Paginator(user_reviews, 5)
     ratings = paginator.get_page(page)
     
     context = {
         "user": request.user,
-        "total_ratings": len(RATINGS_DB),
+        "total_ratings": len(reviews),
         "ratings": ratings,
     }
     return render(request, "music_notes/account.html", context)
+
+@login_required
+def add(request):
+    if request.method == "POST":
+        album_title = request.POST["title"]
+        artist_name = request.POST["artist"]
+        
+        artists = Artist.objects.filter(name=artist_name)
+        
+        if len(artists) == 0:
+            artist = Artist(name=artist_name)
+            artist.save()
+        else:
+            artist = artists[0]
+        
+        album = Album(title=album_title, artist=artist)
+        album.save()
+        return redirect(reverse("music_notes:index"))
+    return render(request, "music_notes/add.html")
+
+@login_required
+def add_song(request, artist_slug, album_slug):
+    if request.method == "POST":
+        
+        title = request.POST["title"]
+        
+        album = Album.objects.filter(slug=album_slug)
+        song = Song(title=title, artist=album[0].artist, album=album[0])
+        song.save()
+        
+        songs = Song(album=album[0])
+        reviews = AlbumReview.objects.filter(album=album[0])
+        
+        return redirect(("music_notes:index"))
+    
+    album = Album.objects.filter(slug=album_slug)
+    return render(request, "music_notes/add_song.html", {
+        'album': album[0],
+        'artist': album[0].artist
+    })
 
 
 @login_required
@@ -227,23 +276,57 @@ def album_detail(request, artist_slug, album_slug):
     album = get_object_or_404(Album, slug=album_slug, artist__slug=artist_slug)
     songs = album.songs.all()
     artist = album.artist
-    release_date = album.release_date
     #reviews
     page = request.GET.get('page', 1)
     all_reviews = AlbumReview.objects.filter(album=album).select_related('user').order_by('-created_at')
     paginator = Paginator(all_reviews, 5)  # 5 reviews per page
     reviews = paginator.get_page(page)
-    #average rating
-    average_rating = all_reviews.aggregate(Avg('rating'))['rating__avg']
+    
+    average = AlbumReview.objects.filter(album=album).aggregate(Avg('rating'))
+    print(average)
+    album.averageRating = average['rating__avg']
+    album.save()
+    
+    try:
+        album = Album.objects.get(slug=album_slug)
+    except Album.DoesNotExist:
+        album = None
+    
+    if album is None:
+        return redirect('/music_notes/')
+    
+    shown = True
+    if len(AlbumReview.objects.filter(album=album, user=request.user)) != 0:
+        shown = False
+
+    if request.method == "POST":
+        
+        album_form = AddAlbumReview(request.POST)
+        review = request.POST["review"]
+        rating = request.POST["rating"]
+        
+        user = UserProfile.objects.get_or_create(user=request.user)
+        review = AlbumReview(album=album, user=request.user, review=review, rating=rating)
+        if len(AlbumReview.objects.filter(album=album, user=request.user)) == 0:
+            review.save()
+            average = AlbumReview.objects.filter(album=album).aggregate(Avg('rating'))
+            album.averageRating=average['rating__avg']
+            print(average)
+            return redirect(("music_notes:index"))
+        else :
+            user_review = AlbumReview.objects.filter(album=album, user=request.user)
+            user_review[0].rating = rating
+            user_review[0].review = review
+            user_review[0].save()
+            shown = False
 
     return render(request, 'music_notes/album_detail.html', {
         'album': album,
         'songs': songs,
         'artist': artist,
-        'release_date': release_date,
         'reviews': reviews,
         'total_reviews': paginator.count,
-        'average_rating': average_rating,
+        'shown' : shown,
     })
 
 def song_detail(request, artist_slug, album_slug, song_slug):
@@ -259,68 +342,42 @@ def song_detail(request, artist_slug, album_slug, song_slug):
     all_reviews = SongReview.objects.filter(song=song).select_related('user').order_by('-created_at')
     paginator = Paginator(all_reviews, 5)  # 5 reviews per page
     reviews = paginator.get_page(page)
-    #average rating
-    average_rating = all_reviews.aggregate(Avg('rating'))['rating__avg']
+    
+    average = SongReview.objects.filter(song=song).aggregate(Avg('rating'))
+    print(average)
+    song.averageRating = average['rating__avg']
+    song.save()
+    
+    shown = True
+    if len(SongReview.objects.filter(song=song, user=request.user)) != 0:
+        shown = False
+        
+    if request.method == "POST":
+        
+        album_form = AddSongReview(request.POST)
+        review = request.POST["review"]
+        rating = request.POST["rating"]
+        
+        user = UserProfile.objects.get_or_create(user=request.user)
+        review = SongReview(song=song, user=request.user, review=review, rating=rating)
+        
+        if len(SongReview.objects.filter(song=song, user=request.user)) == 0:
+            review.save()
+            average = SongReview.objects.filter(song=song).aggregate(Avg('rating'))
+            song.averageRating=average['rating__avg']
+            print(average)
+            return redirect(("music_notes:index"))
+        else :
+            user_review = SongReview.objects.filter(song=song, user=request.user)
+            user_review[0].rating = rating
+            user_review[0].review = review
+            shown = False
 
     return render(request, 'music_notes/song_detail.html', {
         'song': song,
         'album': song.album,
         'artist': song.album.artist,
-        'duration': song.duration,
         'reviews': reviews,
         'total_reviews': paginator.count,
-        'average_rating': average_rating,
+        'shown' : shown,
     })
-
-
-# THE ENTRIES BELOW ARE JUST FOR TESTING PURPOSES. REPLACE IT WITH REAL DATABASE QUERIES
-
-# INDEX PAGE
-POPULAR_SONGS = [
-    {"title": "Song 1", "artist": "Artist A"},
-    {"title": "Song 2", "artist": "Artist B"},
-    {"title": "Song 3", "artist": "Artist C"},
-    {"title": "Song 4", "artist": "Artist D"},
-    {"title": "Song 5", "artist": "Artist E"},
-]
-
-HIGHEST_RATED_SONGS = [
-    {"title": "Song 1", "artist": "Artist X"},
-    {"title": "Song 2", "artist": "Artist Y"},
-    {"title": "Song 3", "artist": "Artist Z"},
-    {"title": "Song 4", "artist": "Artist W"},
-    {"title": "Song 5", "artist": "Artist V"},
-    {"title": "Song 6", "artist": "Artist U"},
-    {"title": "Song 7", "artist": "Artist T"},
-    {"title": "Song 8", "artist": "Artist S"},
-    {"title": "Song 9", "artist": "Artist R"},
-    {"title": "Song 10", "artist": "Artist Q"},
-]
-
-SONG_SUGGESTIONS = [
-    {"id": 1, "title": "Search Song 1"},
-    {"id": 2, "title": "Search Song 2"},
-]
-
-ALBUM_SUGGESTIONS = [
-    {"id": 1, "title": "Search Album 1"},
-    {"id": 2, "title": "Search Album 2"},
-]
-
-RECOMMENDED_SONGS = [
-    {"title": "Recommended 1", "artist": "Artist M"},
-    {"title": "Recommended 2", "artist": "Artist N"},
-    {"title": "Recommended 3", "artist": "Artist O"},
-    {"title": "Recommended 4", "artist": "Artist P"},
-]
-
-# ACCOUNT PAGE
-RATINGS_DB = [
-    {"value": 3, "song_or_album": "Shape of You", "artist": "Ed Sheeran", "date": "2025-03-01"},
-    {"value": 4, "song_or_album": "Blinding Lights", "artist": "The Weeknd", "date": "2025-02-28"},
-    {"value": 3, "song_or_album": "Bohemian Rhapsody", "artist": "Queen", "date": "2025-02-25"},
-    {"value": 5, "song_or_album": "Thriller", "artist": "Michael Jackson", "date": "2025-02-20"},
-    {"value": 5, "song_or_album": "Numb", "artist": "Linkin Park", "date": "2025-02-15"},
-    {"value": 4, "song_or_album": "Someone Like You", "artist": "Adele", "date": "2025-02-10"},
-    {"value": 2, "song_or_album": "Old Town Road", "artist": "Lil Nas X", "date": "2025-02-05"},
-]

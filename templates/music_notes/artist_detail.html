@@ -34,14 +34,14 @@
                     <thead class="table-dark">
                         <tr>
                             <th>Name</th>
-                            <th>Release Date</th>
+                            <th>Average rating</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for album in albums %}
                         <tr>
                             <td><a href="{% url 'music_notes:album_detail' artist_slug=album.artist.slug album_slug=album.slug%}">{{ album.title }}</a></td>
-                            <td>{{ album.release_date }}</td>
+                            <td>{{album.averageRating}}</td>
                         </tr>
                         {% empty %}
                         <tr>
