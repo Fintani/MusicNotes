@@ -64,6 +64,18 @@
 
         <!-- Right Column: Ratings -->
         <div class="col-md-8">
+            <div class="fw-bold text-center">
+                <div class="border border-2 rounded p-3 d-inline-block">
+                    {% if album.averageRating %}
+                    <h2 class="fw-bold m-0">AVG RATING</h2>
+                    <h2 class="fw-bold m-0">{{ album.averageRating|floatformat:1 }} / 5</h2>
+                    {% else %}
+                    <h2 class="fw-bold m-0">AVG RATING</h2>
+                    <h2 class="fw-bold m-0">--- / 5</h2>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="fw-bold text-center" ></p>
 
             <h4 class="fw-bold text-center">Songs</h4>
             <!-- Songs Table -->
