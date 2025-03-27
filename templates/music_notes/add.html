@@ -9,7 +9,7 @@
 <div class="container mt-4 d-flex flex-row justify-content-center">
     <div class="d-flex flex-column justify-content-around align-items-center col-sm-4">
         <h1>Add an album</h1>
-        <form id="add_form" method="post" action="{% url 'music_notes:add' %}">
+        <form id="add_form" method="post" action="{% url 'music_notes:add' %}" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div class="mb-3">
@@ -24,7 +24,7 @@
 
             <div class="mb-3">
                 <label for="cover" class="form-label">Cover:</label>
-                <input type="file" class="form-control" name="cover" id="cover">
+                <input type="file" class="form-control" name="cover" id="cover" required>
             </div>
 
             <button type="submit" class="btn btn-dark w-100 py-2">Add</button>
