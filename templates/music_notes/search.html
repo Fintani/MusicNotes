@@ -14,19 +14,23 @@
 
                 {% csrf_token %}
                 <div>
-                    <input type="text" class="form-control text-center w-100" name="song_query" placeholder="{{ song_query }}">
-                    <button type="submit" class="btn btn-dark w-100">Search</button>
+                    <div class="p-2">
+                        <input type="text" class="form-control text-center w-100" name="song_query" placeholder="{{ song_query }}">
+                    </div>
+                    <div class="p-2">
+                        <button type="submit" class="btn btn-dark w-50">Search</button>
+                   </div>
                 </div>
             </form>
         </div>
         <br/>
-        <h3>Albums:</h3>
+        <h3>Albums</h3>
         {% for album in albums %}
         <div class="d-flex flex-row m-3 py-2 w-50 border">
             <div class="px-3">
             {% if album.cover_image %}
-                <img class="w-25" src="{{ album.cover_image.url }}" alt="{{ album }} cover"
-                style="width: 150px; height: 150px; object-fit: cover;">
+                <img src="{{ album.cover_image.url }}" alt="{{ album }} cover"
+                class="img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
             {% else %}
                 <img src="{% static 'images/placeholder_album.jpg' %}" alt="{{ album }} cover"
                 class="img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
@@ -43,8 +47,8 @@
         <div class="d-flex flex-row m-3 py-2 w-50 border">
             <div class="px-3">
             {% if song.album.cover_image %}
-                <img class="w-25" src="{{ album.cover_image.url }}" alt="{{ album }} cover"
-                style="width: 150px; height: 150px; object-fit: cover;">
+                <img src="{{ album.cover_image.url }}" alt="{{ album }} cover"
+                class="img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
             {% else %}
                 <img src="{% static 'images/placeholder_album.jpg' %}" alt="{{ album }} cover"
                 class="img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
@@ -62,7 +66,7 @@
         <div class="d-flex flex-row m-3 py-2 w-50 border">
             <div class="px-3">
             {% if artist.profile_picture %}
-                <img class="w-25" src="{{ artist.profile_picture.url }}" alt="{{ album }} cover"
+                <img src="{{ artist.profile_picture.url }}" alt="{{ album }} cover"
                 class="rounded-circle shadow-sm mb-3" style="width: 150px; height: 150px; object-fit: cover;">
             {% else %}
                 <img src="{% static 'images/default_profile.jpg' %}" alt="{{ album }} cover"
