@@ -27,15 +27,31 @@
             <h4 class="fw-bold">{{ song.title }}</h4>
             <p>
                 Artist: <a href="{% url 'music_notes:artist_detail' artist_slug=album.artist.slug %}">{{ album.artist }}</a>
-                &nbsp;|&nbsp;
+                <br>
                 Album: <a href="{% url 'music_notes:album_detail' artist_slug=album.artist.slug album_slug=album.slug %}">{{ album.title }}</a>
             </p>
+
             <!-- leave song review -->
+            {% if shown %}
             {% if user.is_authenticated %}
-                <!-- !!!!FalseLink just a placeholder -->
-                <a href="{% url 'music_notes:edit_account' %}" class="btn btn-outline-primary mt-3">Leave a Song Review</a>
+            <form id="add_song_review" method="post" action="{% url 'music_notes:song_detail' artist_slug=song.album.artist.slug album_slug=song.album.slug song_slug=song.slug%}">
+                {% csrf_token %}
+
+                <div class="slidecontainer">
+                    <label for="rating" class="form-label">Rating:</label>
+                    <input type="range" min="1", max="5" class="form-control" name="rating" id="rating" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="review" class="form-label">Review:</label>
+                    <input type="text" class="form-control" name="review" id="review" required>
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100 py-2">Add</button>
+            </form>
             {% else %}
-                <a href="{% url 'music_notes:login' %}" class="btn btn-outline-primary mt-3">LOG IN to leave a song review</a>
+                <a href="{% url 'music_notes:login' %}" class="btn btn-outline-primary mt-3">LOG IN to leave an album review</a>
+            {% endif %}
             {% endif %}
         </div>
 
