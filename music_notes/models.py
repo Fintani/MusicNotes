@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db.models import Avg
 
 class Category(models.Model):
     NAME_MAX_LENGTH = 128
@@ -87,6 +88,10 @@ class Song(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def calculate_average(self):
+        self.averageRating = SongReview.objects.filter(song=self).aggregate(Avg('rating'))['rating__avg']
+        self.save()
     
     
 

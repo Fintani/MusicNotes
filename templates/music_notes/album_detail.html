@@ -22,7 +22,6 @@
                 class="rounded shadow-sm mb-3"
                 style="width: 200px; height: 200px; object-fit: cover;">
             {% endif %}
-            
             <!-- Album info -->
             <h4 class="fw-bold">{{ album.title }}</h4>
             <p>
@@ -61,8 +60,6 @@
             } 
         </script>
 
-
-
         <!-- Right Column: Ratings -->
         <div class="col-md-8">
             <div class="fw-bold text-center">
@@ -77,32 +74,6 @@
                 </div>
             </div>
             <p class="fw-bold text-center" ></p>
-
-            <h4 class="fw-bold text-center">Ratings</h4>
-            <div class="table-responsive">
-                <table class="table table-striped shadow-sm text-center">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Rating</th>
-                            <th>User</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for review in reviews %}
-                        <tr>
-                            <td>{{ review.rating }}/5</td>
-                            <td>{{ review.user }}</td>
-                            <td>{{ review.created_at }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="4" class="text-center text-muted">No ratings available</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
 
             <h4 class="fw-bold text-center">Songs</h4>
             <!-- Songs Table -->
@@ -131,8 +102,33 @@
             <tr>
                 <button class="btn btn-dark w-100 py-2"><a href="{% url 'music_notes:add_song' artist_slug=album.artist.slug album_slug=album.slug%}">Add Song</a></button>
             </tr>
-            
             <p></p>
+
+            <h4 class="fw-bold text-center">Ratings</h4>
+            <div class="table-responsive">
+                <table class="table table-striped shadow-sm text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Rating</th>
+                            <th>User</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in reviews %}
+                        <tr>
+                            <td>{{ review.rating }}/5</td>
+                            <td>{{ review.user }}</td>
+                            <td>{{ review.created_at }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No ratings available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             <!-- Pagination -->
             <div class="d-flex justify-content-between">
                 {% if reviews.has_previous %}
