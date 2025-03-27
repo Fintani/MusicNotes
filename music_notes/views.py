@@ -11,7 +11,6 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from .forms import EditAccountForm
 from django.contrib import messages
-from django.db.models import Avg
 from .models import UserProfile, Artist, Album, Song, AlbumReview, SongReview
 
 
@@ -42,27 +41,7 @@ def about(request):
     return render(request, "music_notes/about.html", context=context_dict)
 
 def browse(request):
-    #artists
-    page1 = request.GET.get('page', 1)
-    all_artists = Artist.objects.order_by('name')
-    paginator1 = Paginator(all_artists, 8)  # 8 artist per page
-    artists = paginator1.get_page(page1)
-    #albums
-    page2 = request.GET.get('page', 1)
-    all_albums = Album.objects.order_by('title')
-    paginator2 = Paginator(all_albums, 8)  # 8 albums per page
-    albums = paginator2.get_page(page2)
-    #songs
-    page3 = request.GET.get('page', 1)
-    all_songs = Song.objects.order_by('title')
-    paginator3 = Paginator(all_songs, 8)  # 8 songs per page
-    songs = paginator3.get_page(page3)
-
-    return render(request, 'music_notes/browse.html',{
-        'artists': artists,
-        'albums': albums,
-        'songs': songs,
-    })
+    return render(request, 'music_notes/browse.html')
 
 
 def register(request):
@@ -135,17 +114,17 @@ def account(request):
     user_reviews = []
     for i in reviews:
         user_reviews.append({"value":i.rating, "artist": i.album.artist.name, "song_or_album": i.album, "date": i.created_at})
-
+        
     reviews = SongReview.objects.filter(user=request.user)
     for i in reviews:
         user_reviews.append({"value":i.rating, "artist": i.song.artist.name, "song_or_album": i.song, "date": i.created_at})
-    
+        
     paginator = Paginator(user_reviews, 5)
     ratings = paginator.get_page(page)
     
     context = {
         "user": request.user,
-        "total_ratings": len(user_reviews),
+        "total_ratings": len(reviews),
         "ratings": ratings,
     }
     return render(request, "music_notes/account.html", context)
@@ -182,7 +161,7 @@ def add_song(request, artist_slug, album_slug):
         songs = Song(album=album[0])
         reviews = AlbumReview.objects.filter(album=album[0])
         
-        return redirect(("music_notes:index"))
+        return redirect("music_notes:album_detail", artist_slug=artist_slug, album_slug=album_slug)
     
     album = Album.objects.filter(slug=album_slug)
     return render(request, "music_notes/add_song.html", {
@@ -284,6 +263,8 @@ def album_detail(request, artist_slug, album_slug):
     
     average = AlbumReview.objects.filter(album=album).aggregate(Avg('rating'))
     print(average)
+    if average['rating__avg'] == None:
+        average['rating__avg'] = 0
     album.averageRating = average['rating__avg']
     album.save()
     
@@ -296,7 +277,11 @@ def album_detail(request, artist_slug, album_slug):
         return redirect('/music_notes/')
     
     shown = True
-    if len(AlbumReview.objects.filter(album=album, user=request.user)) != 0:
+    try:
+        if len(AlbumReview.objects.filter(album=album, user=request.user)) != 0:
+            shown = False
+            
+    except TypeError:
         shown = False
 
     if request.method == "POST":
@@ -311,8 +296,9 @@ def album_detail(request, artist_slug, album_slug):
             review.save()
             average = AlbumReview.objects.filter(album=album).aggregate(Avg('rating'))
             album.averageRating=average['rating__avg']
+            album.save()
             print(average)
-            return redirect(("music_notes:index"))
+            return redirect("music_notes:album_detail", album_slug=album.slug, artist_slug=album.artist.slug)
         else :
             user_review = AlbumReview.objects.filter(album=album, user=request.user)
             user_review[0].rating = rating
@@ -345,11 +331,16 @@ def song_detail(request, artist_slug, album_slug, song_slug):
     
     average = SongReview.objects.filter(song=song).aggregate(Avg('rating'))
     print(average)
+    if average['rating__avg'] == None:
+        average['rating__avg'] = 0
     song.averageRating = average['rating__avg']
     song.save()
     
     shown = True
-    if len(SongReview.objects.filter(song=song, user=request.user)) != 0:
+    try:
+        if len(SongReview.objects.filter(song=song, user=request.user)) != 0:
+            shown = False
+    except TypeError:
         shown = False
         
     if request.method == "POST":
@@ -365,8 +356,9 @@ def song_detail(request, artist_slug, album_slug, song_slug):
             review.save()
             average = SongReview.objects.filter(song=song).aggregate(Avg('rating'))
             song.averageRating=average['rating__avg']
+            song.save()
             print(average)
-            return redirect(("music_notes:index"))
+            return redirect(("music_notes:album_detail"), album_slug=song.album.slug, artist_slug=song.album.artist.slug)
         else :
             user_review = SongReview.objects.filter(song=song, user=request.user)
             user_review[0].rating = rating
