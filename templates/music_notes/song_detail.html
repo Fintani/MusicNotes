@@ -38,7 +38,7 @@
                 {% csrf_token %}
 
                 <div class="slidecontainer">
-                    <label for="rating" class="form-label">Rating:</label>
+                    <label for="rating" class="form-label">Rating: <span id="rateNumber"></span></label>
                     <input type="range" min="1", max="5" class="form-control" name="rating" id="rating" required>
                 </div>
 
@@ -56,18 +56,6 @@
         </div>
 
     <div class="col-md-8">
-        <div class="fw-bold text-center">
-            <div class="border border-2 rounded p-3 d-inline-block">
-                {% if song.averageRating %}
-                <h2 class="fw-bold m-0">AVG RATING</h2>
-                <h2 class="fw-bold m-0">{{ song.averageRating|floatformat:1 }} / 5</h2>
-                {% else %}
-                <h2 class="fw-bold m-0">AVG RATING</h2>
-                <h2 class="fw-bold m-0">--- / 5</h2>
-                {% endif %}
-            </div>
-        </div>
-        <p class="fw-bold text-center" ></p>
         <h4 class="fw-bold text-center">Ratings</h4>
         <div class="table-responsive">
             <table class="table table-striped shadow-sm text-center">
@@ -93,6 +81,16 @@
                 </tbody>
             </table>
         </div>
+
+        <script>
+            var slider = document.getElementById("rating");
+            var output = document.getElementById("rateNumber");
+            output.innerHTML = slider.value; 
+            slider.oninput = function() {
+                output.innerHTML = this.value;
+            } 
+        </script>
+
         <!-- Pagination -->
         <div class="d-flex justify-content-between">
             {% if reviews.has_previous %}
