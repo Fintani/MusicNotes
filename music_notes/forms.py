@@ -50,7 +50,7 @@ class AddForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("title","artist","cover")
+        fields = ("title","artist","cover",)
 
 
 class AddSongForm(forms.ModelForm):
