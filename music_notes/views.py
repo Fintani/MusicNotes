@@ -114,6 +114,11 @@ def account(request):
     user_reviews = []
     for i in reviews:
         user_reviews.append({"value":i.rating, "artist": i.album.artist.name, "song_or_album": i.album, "date": i.created_at})
+
+    reviews = SongReview.objects.filter(user=request.user)
+    for i in reviews:
+        user_reviews.append({"value":i.rating, "artist": i.song.artist.name, "song_or_album": i.song, "date": i.created_at})
+    
     paginator = Paginator(user_reviews, 5)
     ratings = paginator.get_page(page)
     
